@@ -55,6 +55,7 @@ namespace DataConduitManager.Repositories.Logic
                     empleado.nombres = queryObj["FIRSTNAME"].ToString();
                     empleado.ssno = queryObj["SSNO"].ToString();
                     try { empleado.status = queryObj["STATUS"].ToString(); } catch { empleado.status = null; }
+                    try { empleado.documento = queryObj["OPHONE"].ToString(); } catch { empleado.documento = null; }
                     try { empleado.empresa = queryObj["DIVISION"].ToString(); } catch { empleado.empresa = null; }
                     try { empleado.ciudad = queryObj["CITY"].ToString(); } catch { empleado.ciudad = null; }
                     try { empleado.email = queryObj["EMAIL"].ToString(); } catch { empleado.email = null; }

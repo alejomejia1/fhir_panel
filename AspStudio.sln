@@ -4,11 +4,11 @@ VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspStudio", "AspStudio.csproj", "{A6C3D3AC-A321-4F61-A1AD-909499259A7B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LenelServices", "..\LenelServices\LenelServices.csproj", "{33FF8890-8719-45CD-8BA3-5BC302699005}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LenelServices", "LenelServices\LenelServices.csproj", "{33FF8890-8719-45CD-8BA3-5BC302699005}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Integration_Components", "Integration_Components", "{D8162771-6A35-4FCD-A332-57245038CDD4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataConduitManager", "..\DataConduitManager\DataConduitManager.csproj", "{B899481C-9392-4A75-ACE6-3A737B88721C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataConduitManager", "DataConduitManager\DataConduitManager.csproj", "{B899481C-9392-4A75-ACE6-3A737B88721C}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0DC3A383-F465-4775-B511-B01FB52517D1}"
 	ProjectSection(SolutionItems) = preProject
