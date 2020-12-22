@@ -32,7 +32,8 @@ namespace LenelServices.Controllers
         [HttpGet("/api/CardHolder/ObtenerEmpleado/{idLenel}")]
         public async Task<object> ObtenerEmpleado(string idLenel)
         {
-            return await _cardHolder_REP_LOCAL.ObtenerEmpleado(idLenel);
+            try { return await _cardHolder_REP_LOCAL.ObtenerEmpleado(idLenel); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
         }
 
         [HttpGet("/api/CardHolder/ObtenerVisitante/{idLenel}")]
@@ -49,9 +50,11 @@ namespace LenelServices.Controllers
         }
 
         // PUT: api/CardHolder/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("/api/CardHolder/ActualizarEmpleado/{idLenel}")]
+        public async Task<object> ActualizarEmpleado(string idLenel, [FromBody] UpdateCardHolder_DTO cardHolder)
         {
+            try { return await _cardHolder_REP_LOCAL.ActualizarEmpleado(cardHolder, idLenel); }
+            catch (Exception ex) { return BadRequest(ex.Message); }
         }
 
         // DELETE: api/ApiWithActions/5

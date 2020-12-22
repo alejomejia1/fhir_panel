@@ -13,9 +13,23 @@ namespace DataConduitManager.Repositories.Logic
     {
         private readonly IDataConduITMgr _dataConduITMgr;
 
+        #region constructor
         public CardHolder(IDataConduITMgr dataConduITMgr)
         {
             _dataConduITMgr = dataConduITMgr;
+        }
+        #endregion
+
+        #region Metodos CardHolder
+        public async Task<ManagementObjectSearcher> GetCardHolder(string idLenel)
+        {
+            ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope();
+            ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_CardHolder WHERE ID = " + idLenel);
+            ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
+
+            try { return getCardHolder; }
+            catch (Exception ex) { throw new Exception(ex.Message); }
+
         }
 
         public async Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder)
@@ -33,47 +47,58 @@ namespace DataConduitManager.Repositories.Logic
             PutOptions options = new PutOptions();
             options.Type = PutType.CreateOnly;
 
-            newCardHolderInstance.Put(options); //commit the new instance.
-            //blnRta = true;
+            //SE REALIZA COMMIT DE LA INSTANCIA
+            newCardHolderInstance.Put(options); 
+
             return true;
 
         }
 
-        public async Task<object> GetCardHolder(string idLenel)
+        public async Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idLenel)
         {
-            ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope();
-            ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_CardHolder WHERE ID = " + idLenel);
-            ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
-
             try
             {
-                ObtenerEmpleado_DTO empleado = new ObtenerEmpleado_DTO();
+                ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope();
+                ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_CardHolder WHERE ID = " + idLenel);
+                ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
 
+                //redefine properties value  
                 foreach (ManagementObject queryObj in getCardHolder.Get())
                 {
-                    empleado.apellidos = queryObj["LASTNAME"].ToString();
-                    empleado.nombres = queryObj["FIRSTNAME"].ToString();
-                    empleado.ssno = queryObj["SSNO"].ToString();
-                    try { empleado.status = queryObj["STATUS"].ToString(); } catch { empleado.status = null; }
-                    try { empleado.documento = queryObj["OPHONE"].ToString(); } catch { empleado.documento = null; }
-                    try { empleado.empresa = queryObj["DIVISION"].ToString(); } catch { empleado.empresa = null; }
-                    try { empleado.ciudad = queryObj["CITY"].ToString(); } catch { empleado.ciudad = null; }
-                    try { empleado.email = queryObj["EMAIL"].ToString(); } catch { empleado.email = null; }
+                    queryObj["LASTNAME"] = cardHolder.apellidos;
+                    queryObj["FIRSTNAME"] = cardHolder.nombres;
+                    queryObj["SSNO"] = cardHolder.ssno;
+                    queryObj["STATE"] = cardHolder.status;
+                    queryObj["OPHONE"] = cardHolder.documento;
+                    queryObj["DIVISION"] = cardHolder.empresa;
+                    queryObj["CITY"] = cardHolder.ciudad;
+                    queryObj["EMAIL"] = cardHolder.email;
+
+                    PutOptions options = new PutOptions();
+                    options.Type = PutType.UpdateOnly;
+                    queryObj.Put(options);
                 }
-                return empleado;
+
+                return true;
             }
-            catch (Exception ex) { return ex.Message; }
-
-            
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
+        #endregion
 
+        #region metodos Visitor
         public async Task<object> GetVisitor(string idLenel)
         {
             ManagementScope VisitorScope = _dataConduITMgr.GetManagementScope();
-            ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_Visitor WHERE ID = " + idLenel);
-            ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(VisitorScope, cardHolderSearcher);
+            ObjectQuery  visitorSearcher = new ObjectQuery("SELECT * FROM Lnl_Visitor WHERE ID = " + idLenel);
+            ManagementObjectSearcher getVisitor = new ManagementObjectSearcher(VisitorScope, visitorSearcher);
+
+            try { return getVisitor.Get(); }
+            catch(Exception ex) { throw new Exception(ex.Message); }
             
-            return getCardHolder.Get();
         }
+        #endregion
     }
 }

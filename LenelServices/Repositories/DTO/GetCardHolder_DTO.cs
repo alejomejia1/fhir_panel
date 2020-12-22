@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace DataConduitManager.Repositories.DTO
+namespace LenelServices.Repositories.DTO
 {
-    public class ObtenerEmpleado_DTO
+    public class GetCardHolder_DTO
     {
         public string apellidos { get; set; }
         public string nombres { get; set; }

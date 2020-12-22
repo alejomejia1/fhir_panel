@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataConduitManager.Repositories.DTO;
+using LenelServices.Repositories.DTO;
 
 namespace LenelServices.Repositories.Interfaces
 {
@@ -20,7 +21,7 @@ namespace LenelServices.Repositories.Interfaces
         /// </summary>
         /// <param name="idLenel"></param>
         /// <returns></returns>
-        Task<object> ObtenerEmpleado(string idLenel);
+        Task<GetCardHolder_DTO> ObtenerEmpleado(string idLenel);
 
         /// <summary>
         /// Obtiene un Visitante por medio de DataConduIT
@@ -28,5 +29,13 @@ namespace LenelServices.Repositories.Interfaces
         /// <param name="idLenel"></param>
         /// <returns></returns>
         Task<object> ObtenerVisitante(string idLenel);
+
+        /// <summary>
+        /// Actualiza la informacion de un empleado por medio de DataConduIT
+        /// </summary>
+        /// <param name="cardHolder"></param>
+        /// <param name="idLenel"></param>
+        /// <returns></returns>
+        Task<string> ActualizarEmpleado(UpdateCardHolder_DTO cardHolder, string idLenel);
     }
 }
