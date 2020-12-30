@@ -45,7 +45,7 @@ namespace LenelServices.Repositories.Logic
         public async Task<bool> AbrirPuerta(ReaderPath_DTO readerPath) 
         {
             try{
-                return await _reader_REP.OpenDoor(readerPath.panelID, readerPath.readerID);
+                return await _reader_REP.ReaderSetMode(readerPath.panelID, readerPath.readerID, IReader.readerMode.UNLOCKED );
             }
             catch (Exception ex){
                 throw new Exception(ex.Message);
@@ -56,7 +56,7 @@ namespace LenelServices.Repositories.Logic
         {
             try
             {
-                return await _reader_REP.BlockDoor(readerPath.panelID, readerPath.readerID);
+                return await _reader_REP.ReaderSetMode(readerPath.panelID, readerPath.readerID, IReader.readerMode.LOCKED );
             }
             catch (Exception ex)
             {

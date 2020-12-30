@@ -10,6 +10,7 @@ namespace DataConduitManager.Repositories.Logic
     public class Reader:IReader
     {
         private readonly IDataConduITMgr _dataConduITMgr;
+
         #region Constructor
         public Reader(IDataConduITMgr dataConduITMgr)
         {
@@ -65,8 +66,35 @@ namespace DataConduitManager.Repositories.Logic
             }
 
         }
-        
 
+        public async Task<bool> ReaderSetMode(string panelID, string readerID, IReader.readerMode modeID) {
+            try
+            {
+                ManagementScope readerScope = _dataConduITMgr.GetManagementScope();
+
+                ObjectQuery readerSearcher = new ObjectQuery("SELECT * FROM Lnl_Reader WHERE PanelID='" + panelID + "' " +
+                    "AND ReaderID='" + readerID + "'");
+                ManagementObjectSearcher getreader = new ManagementObjectSearcher(readerScope, readerSearcher);
+
+                foreach (ManagementObject queryObj in getreader.Get())
+                {
+                    ManagementBaseObject inParams = queryObj.GetMethodParameters("SetMode");
+
+                    inParams.Properties["Mode"].Value = modeID;
+
+                    queryObj.InvokeMethod("SetMode", inParams, null);
+
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("No fue posible enviar el evento " + ex.Message);
+            }
+        }
+        
         public async Task<bool> OpenDoor(string panelID, string readerID) {
             try
             {
@@ -120,7 +148,6 @@ namespace DataConduitManager.Repositories.Logic
             {
                 throw new Exception("No fue posible realizar el bloqueo " + ex.Message);
             }
-
         }
         #endregion
     }
