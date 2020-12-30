@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using AspStudio.Models;
 using AspStudio.Data;
 using System.Security.Claims;
+using System.Globalization;
 
 namespace AspStudio.Controllers
 {
@@ -63,7 +64,27 @@ namespace AspStudio.Controllers
                 ClaimsPrincipal principal = new ClaimsPrincipal(identity);
                 await this.HttpContext.SignInAsync("fhirlogin", principal);
                 Console.WriteLine("Autenticado...");
-                return RedirectToAction("Index", "Home");
+
+                if (usuario.FechaInicial <= DateTime.Now && usuario.FechaFinal >= DateTime.Now)
+                {
+                    if (usuario.Rol == 1)
+                    {
+                        return RedirectToAction("Index", "Home");
+                    }
+                    else
+                    {
+                        return RedirectToAction("Index", "Enrol");
+                    }
+                }
+                else
+                {
+                    ViewBag.Mensaje = "Registro fuera de los límites de fecha";
+                    return View();
+                }
+
+                
+
+
             }
             else return View();
         }
