@@ -12,5 +12,7 @@ namespace DataConduitManager.Repositories.Interfaces
         /// </summary>
         /// <returns></returns>
         ManagementScope GetManagementScope();
+
+        string ReceiveEvent(ManagementScope scope);
     }
 }

@@ -31,5 +31,36 @@ namespace DataConduitManager.Repositories.Logic
             conexion.EnablePrivileges = true;
             return new ManagementScope(path, conexion);
         }
+
+        public string ReceiveEvent(ManagementScope scope)
+        {
+            string strSalida;
+            strSalida = "";
+            try
+            {
+
+                ObjectQuery selectQuery = new System.Management.ObjectQuery("Select * from Lnl_AlarmDefinition");
+
+                //Instanciamos un buscador de objetos
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, selectQuery);
+
+                //Usamos un foreach para la selección individual de cada uno de los procesos para añadirlos a un ListBox
+                foreach (ManagementObject proceso in searcher.Get())
+                {
+                    //Console.Write("ID:" + proceso["ID"].ToString() + " - " + "Description:" + proceso["Description"].ToString() + "\n\r");
+                    strSalida = strSalida + "ID:" + proceso["ID"].ToString() + " - " + "Description:" + proceso["Description"].ToString() + " - " + "TextInstructionName:" + proceso["TextInstructionName"].ToString() + Environment.NewLine;
+
+
+                }
+
+                return strSalida;
+
+            }
+            catch (ManagementException err)
+            {
+                //MessageBox.Show("An error occurred while trying to receive an event: " + err.Message);
+                return "ERROR";
+            }
+        }
     }
 }

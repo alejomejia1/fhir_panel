@@ -36,7 +36,7 @@ namespace LenelServices.Repositories.Logic
             {
                 persona.apellidos = queryObj["LASTNAME"].ToString();
                 persona.nombres = queryObj["FIRSTNAME"].ToString();
-                persona.ssno = queryObj["SSNO"].ToString();
+                persona.ssno = queryObj["SSNO"].ToString();//personid
                 try { persona.status = queryObj["STATE"].ToString(); } catch { persona.status = null; }
                 try { persona.documento = queryObj["OPHONE"].ToString(); } catch { persona.documento = null; }
                 try { persona.empresa = queryObj["DIVISION"].ToString(); } catch { persona.empresa = null; }
