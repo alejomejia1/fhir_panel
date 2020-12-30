@@ -26,8 +26,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 
 // Database connection
-using AspStudio.Models;
-using AspStudio.Data;
+
 
 
 using System.IO;
@@ -39,8 +38,31 @@ using Newtonsoft.Json;
 using System.Drawing;
 using System.Drawing.Imaging;
 
+
 namespace AspStudio.Controllers
 {
+
+    public class EnrolData
+    {
+        public string idlenel { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+
+        public string Documento { get; set; }
+
+        public string Empresa { get; set; }
+
+        public Int16 Regional { get; set; }
+        public byte Instalacion { get; set; }
+
+        public string Ciudad { get; set; }
+
+        public string SSNO { get; set; }
+
+        public string IdStatus { get; set; }
+
+        public string Status { get; set; }
+    }
 
     public class EnrolController : Controller
     {
@@ -204,6 +226,67 @@ namespace AspStudio.Controllers
             return View();
         }
 
+        [HttpPost]
+        [HttpGet]
+
+
+        //[Route("api/[controller]")]
+
+        
+
+
+
+
+
+
+
+
+
+
+
+            public Object CreateEnrol(EnrolData mensaje)
+        {
+            System.Console.WriteLine(mensaje);
+
+            try
+            {
+
+                EnrolTemp empleado = new EnrolTemp();
+
+                empleado.IdLenel = mensaje.idlenel;
+                empleado.FirstName = mensaje.FirstName;
+                empleado.LastName = mensaje.LastName;
+                empleado.Documento = mensaje.Documento;
+                empleado.Empresa = mensaje.Empresa;
+                empleado.Regional = mensaje.Regional;
+                empleado.Instalacion = mensaje.Instalacion;
+                empleado.Ciudad = mensaje.Ciudad;
+                empleado.SSNO = "";
+                empleado.IdStatus = "";
+                empleado.Status = "";
+
+                dbContext.EnrolTemporal.Add(empleado);
+                dbContext.SaveChanges();
+
+                return Json(new { success = true });
+
+            }
+
+            catch (Exception ex)
+            {
+                //throw ex;
+                return Json(new { success = false });
+
+            }
+
+
+
+        }
+
+
+
+
+
 
 
 
@@ -256,6 +339,7 @@ namespace AspStudio.Controllers
         {
             // Convertir el string JSON a un objeto
             var mensaje = JsonConvert.DeserializeObject<dynamic>(JsonMsg);
+
 
             // extraer la informacion en formato base64 de la imagen (incluidas las cabeceras)
             string base64 = mensaje.datas.imageFile.ToString();
