@@ -51,9 +51,6 @@ namespace AspStudio.Models
         [Column("ciudadEnroll")]
         public string Ciudad { get; set; }
 
-        [Column("Email")]
-        public string Email { get; set; }
-
         [Column("Regional")]
         public Int16 Regional { get; set; }
 

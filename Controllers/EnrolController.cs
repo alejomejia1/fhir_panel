@@ -226,25 +226,32 @@ namespace AspStudio.Controllers
             return View();
         }
 
-        [HttpPost]
+
         [HttpGet]
+        [Route("/api/get_enrol/{IdLenel}")]
+        public  Object getEnrol(string IdLenel) {
+            try {
+                var result = dbContext.EnrolTemporal.FirstOrDefault(p => p.IdLenel == IdLenel);
+                if (result != null)
+                {
+                    // Retorna Json indicando que ya existe
+                    return new {success=true, data=result};
+                } else {
+                    return new {success=false, message = "Registro no encontrado"};
+                }
+                
+            } catch (Exception e) {
+                System.Console.WriteLine("Error :" + e.Message + e.StackTrace);
+                // Retorna Json indicando que fue exitoso
+                return new {success=false, message = "Error consutando la base de datos"};
+            }
+        }
 
 
-        //[Route("api/[controller]")]
-
-        
-
-
-
-
-
-
-
-
-
-
-
-            public Object CreateEnrol(EnrolData mensaje)
+        [HttpPost]
+        [Route("/api/create_enrol")]
+            
+        public Object CreateEnrol([FromBody] EnrolData mensaje)
         {
             System.Console.WriteLine(mensaje);
 
@@ -275,7 +282,7 @@ namespace AspStudio.Controllers
             catch (Exception ex)
             {
                 //throw ex;
-                return Json(new { success = false });
+                return Json(new { success = false, msg = ex.Message });
 
             }
 
@@ -294,7 +301,7 @@ namespace AspStudio.Controllers
 
         [HttpPost]
 
-        public ActionResult IngresoEmployee(string idlenel, string name, string lastname, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad, string EMail)
+        public ActionResult IngresoEmployee(string idlenel, string name, string lastname, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad)
         {
 
             try
@@ -310,7 +317,6 @@ namespace AspStudio.Controllers
                 empleado.Regional = regional;
                 empleado.Instalacion = instalacion;
                 empleado.Ciudad = Ciudad;
-                empleado.Email = EMail;
                 empleado.SSNO = "";
                 empleado.IdStatus = "";
                 empleado.Status = "";
