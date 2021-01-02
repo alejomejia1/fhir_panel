@@ -28,7 +28,7 @@ namespace AspStudio.Data
 
         public DbSet<TextosEnrol> TextosEnrolam { get; set; }
 
-        public DbSet<EnrolTemp> EnrolTemporal { get; set; }
+        public DbSet<EnrolData> EnrolDatas { get; set; }
 
         public DbSet<Reconocimiento> Reconocimientos { get; set;}
         public DbSet<RecoDia> RecoDia { get; set;}

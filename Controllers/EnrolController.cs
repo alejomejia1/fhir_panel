@@ -37,32 +37,10 @@ using System;
 using Newtonsoft.Json;
 using System.Drawing;
 using System.Drawing.Imaging;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AspStudio.Controllers
 {
-
-    public class EnrolData
-    {
-        public string idlenel { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-
-        public string Documento { get; set; }
-
-        public string Empresa { get; set; }
-
-        public Int16 Regional { get; set; }
-        public byte Instalacion { get; set; }
-
-        public string Ciudad { get; set; }
-
-        public string SSNO { get; set; }
-
-        public string IdStatus { get; set; }
-
-        public string Status { get; set; }
-    }
 
     public class EnrolController : Controller
     {
@@ -116,6 +94,8 @@ namespace AspStudio.Controllers
             List<dynamic> regionales = new List<dynamic>();
             dynamic regional;
 
+            
+
             try
             {
                 foreach (var registro in regRegionales)
@@ -137,7 +117,7 @@ namespace AspStudio.Controllers
 
 
 
-
+            
             var regInstalaciones = dbContext.Instalaciones;
 
             List<dynamic> instalaciones = new List<dynamic>();
@@ -145,13 +125,12 @@ namespace AspStudio.Controllers
 
             try
             {
-                foreach (var registro in regInstalaciones)
-                {
+                
                     instalacion = new ExpandoObject();
-                    instalacion.Codigo = registro.Codigo;
-                    instalacion.Descripcion = registro.Descripcion;
+                    instalacion.Codigo = 0;
+                    instalacion.Descripcion = "";
                     instalaciones.Add(instalacion);
-                }
+                
             }
             catch (System.Exception e)
             {
@@ -160,7 +139,7 @@ namespace AspStudio.Controllers
 
             System.Console.WriteLine(instalaciones);
             ViewBag.instalaciones = instalaciones;
-
+            
 
 
 
@@ -244,28 +223,29 @@ namespace AspStudio.Controllers
 
 
 
-            public Object CreateEnrol(EnrolData mensaje)
+            public Object CreateEnrol([FromBody] EnrolData mensaje)
         {
             System.Console.WriteLine(mensaje);
 
             try
             {
 
-                EnrolTemp empleado = new EnrolTemp();
+                Models.EnrolData empleado = new Models.EnrolData();
 
-                empleado.IdLenel = mensaje.idlenel;
-                empleado.FirstName = mensaje.FirstName;
-                empleado.LastName = mensaje.LastName;
-                empleado.Documento = mensaje.Documento;
-                empleado.Empresa = mensaje.Empresa;
+                empleado.idlenel = mensaje.idlenel;
+                empleado.firstName = mensaje.firstName;
+                empleado.lastName = mensaje.lastName;
+                empleado.documento = mensaje.documento;
+                empleado.empresa = mensaje.empresa;
                 empleado.Regional = mensaje.Regional;
                 empleado.Instalacion = mensaje.Instalacion;
                 empleado.Ciudad = mensaje.Ciudad;
                 empleado.SSNO = "";
                 empleado.IdStatus = "";
                 empleado.Status = "";
+                empleado.created = DateTime.Now;
 
-                dbContext.EnrolTemporal.Add(empleado);
+                dbContext.EnrolDatas.Add(empleado);
                 dbContext.SaveChanges();
 
                 return Json(new { success = true });
@@ -287,51 +267,46 @@ namespace AspStudio.Controllers
 
 
 
-
-
-
-
-
-        [HttpPost]
-
         public ActionResult IngresoEmployee(string idlenel, string name, string lastname, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad, string EMail)
         {
 
-            try
-            {
 
-                EnrolTemp empleado = new EnrolTemp();
 
-                empleado.IdLenel = idlenel;
-                empleado.FirstName = name;
-                empleado.LastName = lastname;
-                empleado.Documento = documento;
-                empleado.Empresa = empresa;
-                empleado.Regional = regional;
-                empleado.Instalacion = instalacion;
-                empleado.Ciudad = Ciudad;
-                empleado.Email = EMail;
-                empleado.SSNO = "";
-                empleado.IdStatus = "";
-                empleado.Status = "";
+                Models.EnrolData empleado = new Models.EnrolData();
 
-                dbContext.EnrolTemporal.Add(empleado);
-                dbContext.SaveChanges();
+            empleado.idlenel = idlenel;
+            empleado.firstName = name;
+            empleado.lastName = lastname;
+            empleado.documento = documento;
+            empleado.empresa = empresa;
+            empleado.Regional = regional;
+            empleado.Instalacion = instalacion;
+            empleado.Ciudad = Ciudad;
+            empleado.SSNO = "";
+            empleado.IdStatus = "";
+            empleado.Status = "";
+            empleado.created = DateTime.Now;
+
+            var mensaje= CreateEnrol(empleado);
+
+            //CreateEnrol(empleado);
+
+            //dbContext.EnrolDatas.Add(empleado);
+            //dbContext.SaveChanges();
 
                 return RedirectToAction("Logout", "Account");
 
-            }
+           
 
-            catch (Exception ex)
-            {
-                //throw ex;
-                return RedirectToAction("Index", "Enrol");
-
-            }
-
-            
 
         }
+
+
+
+
+
+
+
 
 
 
@@ -382,6 +357,68 @@ namespace AspStudio.Controllers
             }
 
             return (imagePath);
+        }
+
+        [HttpGet]
+
+        public JsonResult GetPersonDetails(int Id)
+        {
+            var InstalacQuery =
+            from Instalac in dbContext.Instalaciones
+            where Instalac.Regional == Id
+            select new { Instalac.Codigo, Instalac.Descripcion };
+
+            
+            return Json(InstalacQuery);
+        }
+
+        public ActionResult refreshInstal(int Id)
+        {
+            /*
+            var InstalacQuery =
+            from Instalac in dbContext.Instalaciones
+            where Instalac.Regional == Id
+            select Instalac;*/
+
+            var InstalacQuery =
+            from Instalac in dbContext.Instalaciones
+            where Instalac.Regional == Id
+            select new { Instalac.Codigo, Instalac.Descripcion };
+
+            ViewBag.instalaciones = InstalacQuery;
+            /*
+            var regInstalaciones = dbContext.Instalaciones;
+
+            List<dynamic> instalaciones = new List<dynamic>();
+            dynamic instalacion;
+
+            try
+            {
+                foreach (var registro in regInstalaciones)
+                {
+
+                    if (registro.Regional == Id)
+                    { 
+                        instalacion = new ExpandoObject();
+                        instalacion.Codigo = registro.Codigo;
+                        instalacion.Descripcion = registro.Descripcion;
+                        instalaciones.Add(instalacion);
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                System.Console.WriteLine("Error generando lista" + e.Message + e.StackTrace);
+            }
+
+            System.Console.WriteLine(instalaciones);
+            ViewBag.instalaciones = instalaciones;
+            */
+
+
+
+
+            return View();
         }
 
         /*
