@@ -18,8 +18,8 @@ namespace AspStudio.Models
         [Key]
         public int Id { get; set; }
 
-        [Column("id_lenel")]
-        public string idlenel { get; set; }
+        [Column("Badge_id")]
+        public string Badge_id { get; set; }
 
         [Column("FirstName")]
         public string firstName { get; set; }
@@ -27,8 +27,14 @@ namespace AspStudio.Models
         [Column("LastName")]
         public string lastName { get; set; }
 
+        [Column("tipo_doc")]
+        public string tipo_doc { get; set; }
+
         [Column("Documento")]
         public string documento { get; set; }
+
+        [Column("acepta_terminos")]
+        public bool acepta_terminos { get; set; }
 
         public string empresa { get; set; }
 
@@ -56,11 +62,11 @@ namespace AspStudio.Models
         [Column("Metadatos")]
         public string Metadatos { get; set; }
 
-        [Column("Badge_id")]
-        public string Badge_id { get; set; }
-
         [Column("created")]
         public DateTime created { get; set; }
+
+        [Column("updated")]
+        public DateTime updated { get; set; }
 
     }
 }

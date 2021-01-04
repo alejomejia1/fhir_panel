@@ -19,6 +19,7 @@
 <!-- Calendar picker -->
 <link href="@Url.Content("~/css/calendar.css")" rel="stylesheet" type="text/css" />
 
+
 <style>
 
     #Encabezado {
@@ -65,7 +66,12 @@
         .img img {
             width: 100%;
         }
+
+
+
 </style>
+
+
 
 
 <div class="form-container">
@@ -97,162 +103,138 @@
             </section>
             <br />
 
+
+
+
+
             @using (Html.BeginForm("IngresoEmployee", "Enrol", FormMethod.Post))
             {
-                <div class="form-group"><input class="form-control" type="text" name="idlenel" autocomplete="off" placeholder="Id" /></div>
-                <div class="form-group"><input class="form-control" type="text" name="name" autocomplete="off" placeholder="Nombre" /></div>
-                <div class="form-group"><input class="form-control" type="text" name="lastname" autocomplete="off" placeholder="Apellido" /></div>
-                <div class="form-group"><input class="form-control" type="text" name="documento" autocomplete="off" placeholder="Documento" /></div>
 
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <select name="empresa">
-                            <option value="" data-token=""> Seleccione Empresa </option>
-                            <div class="dropdown-menu" role="menu">
-                                @foreach (dynamic empresa in ViewBag.empresas)
-                                {
-                                    <option value="@empresa.codigo">@empresa.descripcion</option>
-
-                                }
-                            </div>
-                        </select>
-                    </div>
-                </div>
-                <div class="clear"></div>
-
-                <p style="font-size:5px">
-                    <br />
-                </p>
-
-
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <select id="idregional" name="regional" onchange="getval(this.value);">
-                            <option value="" data-token=""> Seleccione Regional </option>
-                            <div class="dropdown-menu" role="menu">
-                                @foreach (dynamic regional in ViewBag.regionales)
-                                {
-                                    <option value="@regional.Codigo">@regional.Descripcion</option>
-
-                                }
-                            </div>
-                        </select>
-                    </div>
-                </div>
-                <div class="clear"></div>
-
-                <p style="font-size:5px">
-                    <br />
-                </p>
+                <table style="width: 100%">
+                    <colgroup>
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 85%;">
+                    </colgroup>
 
 
 
+                    <!-- Put <thead>, <tbody>, and <tr>'s here! -->
+                    <tbody>
+                        <tr>
+                            <td>Tarjeta Ecopetrol :</td>
+                            <td><input style="width:100%;" title="Número de su tarjeta de acceso a Ecopetrol" name="idlenel" id="idlenel" /></td>
+                        </tr>
+                        <tr>
+                            <td>Nombre :</td>
+                            <td><input style="width:100%;" title="Nombre completo" name="name" id="name" /></td>
+                        </tr>
+                        <tr>
+                            <td>Apellidos :</td>
+                            <td><input style="width:100%;" title="Apellidos completos" name="lastname" id="lastname" /></td>
+                        </tr>
 
+                        <tr>
+                            <td>Tipo documento :</td>
+                            <td>
 
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <select name="instalacion" id="instalacion">
-
-                            <option value="" data-token=""> Seleccione Instalación </option>
-                            <div id="dropinst" class="dropdown-menu" role="menu">
-                                @foreach (dynamic instalacion in ViewBag.instalaciones)
-                                {
-                                    <option value="@instalacion.Codigo">@instalacion.Descripcion</option>
-
-                                }
-                            </div>
-                        </select>
-                    </div>
-                                    </div>
-                                    <div class="clear"></div>
-
-                                    <p style="font-size:5px">
-                                        <br />
-                                    </p>
-
-
-                                    <div class="form-group"><input class="form-control" type="text" name="ciudad" autocomplete="off" placeholder="Ciudad" /></div>
-
-                                    <div class="form-group"><input class="form-control" type="text" name="Email" autocomplete="off" placeholder="EMail" /></div>
-
-                                    <div>
-                                        @foreach (dynamic texto in ViewBag.textoEnr)
+                                <select name="tipdoc">
+                                    <option value="" data-token=""> Tipo Documento </option>
+                                    <div class="dropdown-menu" role="menu">
+                                        @foreach (dynamic Tipodoc in ViewBag.tiposdoc)
                                         {
-                                            <p>@texto.Pregunta</p>
-                                            <p>@texto.Texto</p>
-                                            <p>
-                                                <input type="radio" name="bioseguridad" value="Si"> Si
-                                                <input type="radio" name="bioseguridad" value="No"> No
-                                            </p>
+                                            <option value="@Tipodoc.codigo">@Tipodoc.descripcion</option>
+
                                         }
                                     </div>
+                                </select>
 
-                                    <p style="font-size:15px">
-                                        <br />
-                                    </p>
+                            </td>
+                        </tr>
 
-                                    <input type="submit" value="EnviarEmp" class="btn btn-block btn-primary" />
+                        <tr>
+                            <td>Documento :</td>
+                            <td><input style="width:100%;" title="Número de documento de identidad" name="documento" id="documento" /></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-                                }
+                <br />
 
+                <div>
+                    @foreach (dynamic texto in ViewBag.textoEnr)
+                    {
+                        <p>@texto.Pregunta</p>
+                        <p>@texto.Texto</p>
+                        <p>
+                            <input type="radio" name="bioseguridad" value="Si"> Si
+                            <input type="radio" name="bioseguridad" value="No"> No
+                        </p>
+                    }
+                </div>
 
-                                    <p style="font-size:15px">
-                                        Con el ánimo que pueda ingresar a través de mecanismo de reconocimiento facial y control térmico digital y sin contacto con nadie, por favor carga aquí la foto con las siguientes características:
-                                        Nombrar la foto con su numero de registro o cedula.
-                                    </p>
+                <br />
 
-                                    <p style="font-size:12px">
-                                        1.     En formato vertical, con buena iluminación, sin sombras ni flash activo<br />
-                                        2.	A color con la máxima configuración de calidad de la cámara y sin retoques<br />
-                                        3.	Fondo blanco sin objetos de fondo<br />
-                                        4.	Mirar la cámara con los ojos abiertos sin accesorios (gorra, bufandas, gafas oscuras o reflectivas)<br />
-                                        5.      No debe ser mayor a 1 año, si no tiene una disponible es muy fácil ubíquese en una pared blanca y pídale el favor a un familiar que se la tome teniendo en cuenta las recomendaciones del 1 al 4, en caso de que no tenga quien le tome la foto hágalo tipo selfie.<br />
-                                        6.     El archivo no debe ser superior a 10MB ni inferior a 500KB.
-                                    </p>
+                <input type="submit" value="EnviarEmp" class="btn btn-block btn-primary" />
 
-                                    <form enctype="multipart/form-data" id="formuploadajax" method="post">
-                                        <div>
-                                            <label for="image1">Foto</label>
-                                            <input name="file" id="file" type="file" />
-
-                                            <div id="preview" class="img">
-
-
-
-                                            </div>
-
-                                            <div>
-                                                <p>Imagen procesada</p>
-                                                <img id="imgproc" src="" alt="Red dot" />
-                                            </div>
-
-                                            <p style="font-size:10px">
-                                                Límite de número de archivos:1&nbsp;Límite de tamaño del archivo individual: 10MB&nbsp;Tipos de archivo permitidos: Imagen,Vídeo
-                                            </p>
-
-                                            <p style="font-size:15px">
-                                                <br />
-                                            </p>
+            }
 
 
 
-                                            <input type="submit" id="UploadFile" value="Enviar" />
-                                            <!--<input type="button" onclick="Upload($('#UploadFile'));" />-->
+            <p style="font-size:15px">
+                Con el ánimo que pueda ingresar a través de mecanismo de reconocimiento facial y control térmico digital y sin contacto con nadie, por favor carga aquí la foto con las siguientes características:
+                Nombrar la foto con su numero de registro o cédula.
+            </p>
 
+            <p style="font-size:12px">
+                1.     En formato vertical, con buena iluminación, sin sombras ni flash activo<br />
+                2.	A color con la máxima configuración de calidad de la cámara y sin retoques<br />
+                3.	Fondo blanco sin objetos de fondo<br />
+                4.	Mirar la cámara con los ojos abiertos sin accesorios (gorra, bufandas, gafas oscuras o reflectivas)<br />
+                5.      No debe ser mayor a 1 año, si no tiene una disponible es muy fácil ubíquese en una pared blanca y pídale el favor a un familiar que se la tome teniendo en cuenta las recomendaciones del 1 al 4, en caso de que no tenga quien le tome la foto hágalo tipo selfie.<br />
+                6.     El archivo no debe ser superior a 10MB ni inferior a 500KB.
+            </p>
+
+            <form enctype="multipart/form-data" id="formuploadajax" method="post">
+                <div>
+                    <label for="image1">Foto</label>
+                    <input name="file" id="file" type="file" />
+
+                    <div id="preview" class="img">
 
                     </div>
-                    </form>
+
+                    <div>
+                        <p>Imagen procesada</p>
+                        <img width="220" height="220" id="imgproc" src="" alt="Red dot" />
+                    </div>
+
+                    <p style="font-size:10px">
+                        Límite de número de archivos:1&nbsp;Límite de tamaño del archivo individual: 10MB&nbsp;Tipos de archivo permitidos: Imagen,Vídeo
+                    </p>
+
+                    <p style="font-size:15px">
+                        <br />
+                    </p>
+
+
+
+                    <input type="submit" id="UploadFile" value="Enviar" />
+                    <!--<input type="button" onclick="Upload($('#UploadFile'));" />-->
 
 
                 </div>
+            </form>
+
+
+        </div>
             </div>
 
 </div>
 
 <script>
+
+
+
 
             var result = [];
 

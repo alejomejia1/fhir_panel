@@ -20,6 +20,8 @@ namespace AspStudio.Data
         public DbSet<DeviceEmployee> DeviceEmployees { get; set; }
         public DbSet<FhirData> FhirDatas { get; set; }
 
+        public DbSet<Tipodoc> TiposDoc { get; set; }
+
         public DbSet<Empresa> Empresas { get; set; }
 
         public DbSet<Regional> Regionales { get; set; }

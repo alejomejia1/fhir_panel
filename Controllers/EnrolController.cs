@@ -62,19 +62,19 @@ namespace AspStudio.Controllers
         [HttpGet]
         public ViewResult Index()
         {
-            var dispositivos = dbContext.Empresas;
+            var dispositivos = dbContext.TiposDoc;
 
-            List<dynamic> empresas = new List<dynamic>();
-            dynamic empresa;
+            List<dynamic> tiposdoc = new List<dynamic>();
+            dynamic tipodoc;
 
             try
             {
                 foreach (var dispositivo in dispositivos)
                 {
-                    empresa = new ExpandoObject();
-                    empresa.codigo = dispositivo.codigo;
-                    empresa.descripcion = dispositivo.descripcion;
-                    empresas.Add(empresa);
+                    tipodoc = new ExpandoObject();
+                    tipodoc.codigo = dispositivo.codigo;
+                    tipodoc.descripcion = dispositivo.descripcion;
+                    tiposdoc.Add(tipodoc);
                 }
             }
             catch (System.Exception e)
@@ -82,8 +82,8 @@ namespace AspStudio.Controllers
                 System.Console.WriteLine("Error generando lista" + e.Message + e.StackTrace);
             }
             
-            System.Console.WriteLine(empresas);
-            ViewBag.empresas = empresas;
+            System.Console.WriteLine(tiposdoc);
+            ViewBag.tiposdoc = tiposdoc;
 
 
 
@@ -232,18 +232,17 @@ namespace AspStudio.Controllers
 
                 Models.EnrolData empleado = new Models.EnrolData();
 
-                empleado.idlenel = mensaje.idlenel;
+                empleado.Badge_id = mensaje.Badge_id;
                 empleado.firstName = mensaje.firstName;
                 empleado.lastName = mensaje.lastName;
+                empleado.tipo_doc = mensaje.tipo_doc;
                 empleado.documento = mensaje.documento;
-                empleado.empresa = mensaje.empresa;
-                empleado.Regional = mensaje.Regional;
-                empleado.Instalacion = mensaje.Instalacion;
-                empleado.Ciudad = mensaje.Ciudad;
+                empleado.acepta_terminos = mensaje.acepta_terminos;
                 empleado.SSNO = "";
                 empleado.IdStatus = "";
                 empleado.Status = "";
                 empleado.created = DateTime.Now;
+                empleado.Metadatos = mensaje.Metadatos;
 
                 dbContext.EnrolDatas.Add(empleado);
                 dbContext.SaveChanges();
@@ -267,17 +266,19 @@ namespace AspStudio.Controllers
 
 
 
-        public ActionResult IngresoEmployee(string idlenel, string name, string lastname, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad, string EMail)
+        public ActionResult IngresoEmployee(string badgeid, string name, string lastname, string tipodoc, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad, string EMail, string metadatos, bool aceptaterminos)
         {
 
 
 
-                Models.EnrolData empleado = new Models.EnrolData();
+               Models.EnrolData empleado = new Models.EnrolData();
 
-            empleado.idlenel = idlenel;
+            empleado.Badge_id = badgeid;
             empleado.firstName = name;
             empleado.lastName = lastname;
+            empleado.tipo_doc = tipodoc;
             empleado.documento = documento;
+            empleado.acepta_terminos = aceptaterminos;
             empleado.empresa = empresa;
             empleado.Regional = regional;
             empleado.Instalacion = instalacion;
@@ -286,6 +287,7 @@ namespace AspStudio.Controllers
             empleado.IdStatus = "";
             empleado.Status = "";
             empleado.created = DateTime.Now;
+            empleado.Metadatos = metadatos;
 
             var mensaje= CreateEnrol(empleado);
 
