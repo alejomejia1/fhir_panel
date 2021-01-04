@@ -44,7 +44,7 @@ namespace AspStudio.Controllers
 
     public class EnrolData
     {
-        public string idlenel { get; set; }
+        // public string idlenel { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
 
@@ -62,6 +62,22 @@ namespace AspStudio.Controllers
         public string IdStatus { get; set; }
 
         public string Status { get; set; }
+
+        public string Badge_id { get; set; }
+
+        public string Metadatos { get; set; }
+
+        public bool acepta_terminos { get; set; }
+
+    }
+
+    public class EnrolSearch
+    {
+        // public string idlenel { get; set; }
+        public string BadgeId { get; set; }
+        public string Documento { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
     }
 
     public class EnrolController : Controller
@@ -228,10 +244,26 @@ namespace AspStudio.Controllers
 
 
         [HttpGet]
-        [Route("/api/get_enrol/{IdLenel}")]
-        public  Object getEnrol(string IdLenel) {
+        [Route("/api/get_enrol")]
+        public  Object getEnrol(EnrolSearch enrolsearch) {
+
             try {
-                var result = dbContext.EnrolTemporal.FirstOrDefault(p => p.IdLenel == IdLenel);
+                var result = from o in dbContext.EnrolTemporal
+                            select o;
+                
+                // if (enrolsearch.idlenel != null)
+                //     result = result.Where(c => c.IdLenel == enrolsearch.idlenel);
+                
+                if (enrolsearch.Documento != null)
+                    result = result.Where(c => c.Documento == enrolsearch.Documento);
+                
+                if (enrolsearch.LastName != null)
+                    result = result.Where(c => c.LastName == enrolsearch.LastName);
+                
+                if (enrolsearch.FirstName != null)
+                    result = result.Where(c => c.FirstName == enrolsearch.FirstName);
+
+                //var result = dbContext.EnrolTemporal.FirstOrDefault(p => p.IdLenel == IdLenel);
                 if (result != null)
                 {
                     // Retorna Json indicando que ya existe
@@ -259,19 +291,23 @@ namespace AspStudio.Controllers
             {
 
                 EnrolTemp empleado = new EnrolTemp();
+                DateTime localDate = DateTime.Now;  
 
-                empleado.IdLenel = mensaje.idlenel;
+                // empleado.IdLenel = mensaje.idlenel;
+                empleado.Badge_id = mensaje.Badge_id;
                 empleado.FirstName = mensaje.FirstName;
                 empleado.LastName = mensaje.LastName;
                 empleado.Documento = mensaje.Documento;
                 empleado.Empresa = mensaje.Empresa;
                 empleado.Regional = mensaje.Regional;
                 empleado.Instalacion = mensaje.Instalacion;
+                empleado.Metadatos = mensaje.Metadatos;
                 empleado.Ciudad = mensaje.Ciudad;
+                empleado.acepta_terminos = mensaje.acepta_terminos;
                 empleado.SSNO = "";
                 empleado.IdStatus = "";
                 empleado.Status = "";
-
+                empleado.Created = localDate;
                 dbContext.EnrolTemporal.Add(empleado);
                 dbContext.SaveChanges();
 
@@ -301,7 +337,7 @@ namespace AspStudio.Controllers
 
         [HttpPost]
 
-        public ActionResult IngresoEmployee(string idlenel, string name, string lastname, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad)
+        public ActionResult IngresoEmployee(string badge_id, string name, string lastname, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad)
         {
 
             try
@@ -309,7 +345,7 @@ namespace AspStudio.Controllers
 
                 EnrolTemp empleado = new EnrolTemp();
 
-                empleado.IdLenel = idlenel;
+                empleado.Badge_id = badge_id;
                 empleado.FirstName = name;
                 empleado.LastName = lastname;
                 empleado.Documento = documento;
@@ -331,6 +367,7 @@ namespace AspStudio.Controllers
             catch (Exception ex)
             {
                 //throw ex;
+                System.Console.WriteLine(ex.Message);
                 return RedirectToAction("Index", "Enrol");
 
             }

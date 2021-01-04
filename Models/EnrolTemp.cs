@@ -18,8 +18,8 @@ namespace AspStudio.Models
         [Key]
         public int Id { get; set; }
 
-        [Column("id_lenel")]
-        public string IdLenel { get; set; }
+        // [Column("id_lenel")]
+        // public string IdLenel { get; set; }
 
         [Column("lastname")]
         public string LastName { get; set; }
@@ -59,6 +59,15 @@ namespace AspStudio.Models
 
         [Column("CiudadOrigen")]
         public string CiudadOrigen { get; set; }
+
+        [Column("Metadatos")]
+        public string Metadatos { get; set; }
+
+        [Column("Badge_id")]
+        public string Badge_id { get; set; }
+
+        [Column("acepta_terminos")]
+        public Boolean acepta_terminos { get; set; }
 
     }
 }
