@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 namespace AspStudio.Models
 {
 
-    // Definicion del Objeto Empresas (tabla para almacenar la informacion de Empresas)
-    [Table("Empresas")]
-    public class Empresa
+    // Definicion del Objeto Empresas (tabla para almacenar la informacion de Regionales)
+    [Table("Regionales")]
+    public class Regional
     {
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        [Column("codigo")]
-        [Key]
-        public string codigo { get; set; }
 
-        [Column("descripcion")]
-        public string descripcion { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Column("Codigo")]
+        [Key]
+        public Int16 Codigo { get; set; }
+
+        [Column("Descripcion")]
+        public string Descripcion { get; set; }
 
     }
 }

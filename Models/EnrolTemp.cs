@@ -1,4 +1,4 @@
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -8,17 +8,18 @@ using System.Threading.Tasks;
 
 namespace AspStudio.Models
 {
-    
-    [Table("employees")]
-    public class Employee
+
+    [Table("EnrolTemp")]
+    public class EnrolTemp
     {
+
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
         [Key]
         public int Id { get; set; }
 
-        [Column("id_lenel")]
-        public string IdLenel { get; set; }
+        // [Column("id_lenel")]
+        // public string IdLenel { get; set; }
 
         [Column("lastname")]
         public string LastName { get; set; }
@@ -41,30 +42,32 @@ namespace AspStudio.Models
         [Column("empresa")]
         public string Empresa { get; set; }
 
-        [Column("nit")]
-        public string Nit { get; set; }
-
         [Column("imageUrl")]
         public string imageUrl { get; set; }
-
-        [Column("start_time")]
-        public DateTime? StartTime { get; set; }
-
-        [Column("hasPhoto")]
-        public bool hasPhoto { get; set; }
-
-        [Column("end_time")]
-        public DateTime? EndTime { get; set; }
 
         [Column("created")]
         public DateTime? Created { get; set; }
 
-        [Column("updated")]
-        public DateTime? Updated { get; set; }
-
         [Column("ciudadEnroll")]
         public string Ciudad { get; set; }
 
+        [Column("Regional")]
+        public Int16 Regional { get; set; }
+
+        [Column("Instalacion")]
+        public Byte Instalacion { get; set; }
+
+        [Column("CiudadOrigen")]
+        public string CiudadOrigen { get; set; }
+
+        [Column("Metadatos")]
+        public string Metadatos { get; set; }
+
+        [Column("Badge_id")]
+        public string Badge_id { get; set; }
+
+        [Column("acepta_terminos")]
+        public Boolean acepta_terminos { get; set; }
 
     }
 }
