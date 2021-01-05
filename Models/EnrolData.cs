@@ -10,7 +10,7 @@ namespace AspStudio.Models
 {
 
     [Table("EnrolTemp")]
-    public class EnrolTemp
+    public class EnrolData
     {
 
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -18,17 +18,38 @@ namespace AspStudio.Models
         [Key]
         public int Id { get; set; }
 
-        // [Column("id_lenel")]
-        // public string IdLenel { get; set; }
+        [Column("Badge_id")]
+        public string Badge_id { get; set; }
 
-        [Column("lastname")]
-        public string LastName { get; set; }
+        [Column("FirstName")]
+        public string firstName { get; set; }
 
-        [Column("firstname")]
-        public string FirstName { get; set; }
+        [Column("LastName")]
+        public string lastName { get; set; }
+
+        [Column("tipo_doc")]
+        public string tipo_doc { get; set; }
+
+        [Column("Documento")]
+        public string documento { get; set; }
+
+        [Column("acepta_terminos")]
+        public bool acepta_terminos { get; set; }
+
+        public string empresa { get; set; }
+
+        public Int16 Regional { get; set; }
+        public byte Instalacion { get; set; }
+
+        [Column("CiudadOrigen")]
+        public string Ciudad { get; set; }
+
+        public string ciudadEnroll { get; set; }
+
 
         [Column("ssno")]
         public string SSNO { get; set; }
+
 
         [Column("id_status")]
         public string IdStatus { get; set; }
@@ -36,29 +57,21 @@ namespace AspStudio.Models
         [Column("status")]
         public string Status { get; set; }
 
-        [Column("documento")]
-        public string Documento { get; set; }
-
-        [Column("empresa")]
-        public string Empresa { get; set; }
-
-        [Column("imageUrl")]
         public string imageUrl { get; set; }
 
-        [Column("created")]
-        public DateTime? Created { get; set; }
-
-        [Column("ciudadEnroll")]
-        public string Ciudad { get; set; }
+        [Column("Metadatos")]
+        public string Metadatos { get; set; }
 
         [Column("Regional")]
         public Int16 Regional { get; set; }
 
         [Column("Instalacion")]
         public Byte Instalacion { get; set; }
+        [Column("created")]
+        public DateTime created { get; set; }
 
-        [Column("CiudadOrigen")]
-        public string CiudadOrigen { get; set; }
+        [Column("updated")]
+        public DateTime updated { get; set; }
 
         [Column("Metadatos")]
         public string Metadatos { get; set; }

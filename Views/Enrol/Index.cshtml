@@ -6,7 +6,7 @@
 
 
 
-@model IQueryable<Empresa>
+
 
 
 
@@ -18,6 +18,7 @@
 <script type="text/javascript" src="@Url.Content("~/js/calendar.min.js")"></script>
 <!-- Calendar picker -->
 <link href="@Url.Content("~/css/calendar.css")" rel="stylesheet" type="text/css" />
+
 
 <style>
 
@@ -65,7 +66,12 @@
         .img img {
             width: 100%;
         }
+
+
+
 </style>
+
+
 
 
 <div class="form-container">
@@ -97,110 +103,86 @@
             </section>
             <br />
 
+
+
+
+
             @using (Html.BeginForm("IngresoEmployee", "Enrol", FormMethod.Post))
             {
-                <div class="form-group"><input class="form-control" type="text" name="idlenel" autocomplete="off" placeholder="Id" /></div>
-                <div class="form-group"><input class="form-control" type="text" name="name" autocomplete="off" placeholder="Nombre" /></div>
-                <div class="form-group"><input class="form-control" type="text" name="lastname" autocomplete="off" placeholder="Apellido" /></div>
-                <div class="form-group"><input class="form-control" type="text" name="documento" autocomplete="off" placeholder="Documento" /></div>
 
-                <div class="row">
-
-                <div class="col-md-6">
-                    <select name="empresa">
-                        <option value="" data-token=""> Seleccione Empresa </option>
-                        <div class="dropdown-menu" role="menu">
-                            @foreach (dynamic empresa in ViewBag.empresas)
-                                                            {
-                            <option value="@empresa.codigo">@empresa.descripcion</option>
-
-                        }
-                        </div>
-                    </select>
-                </div>
-                </div>
-                <div class="clear"></div>
-
-                <p style="font-size:5px">
-                    <br />
-                </p>
-
-
-                <div class="row">
-
-                    <div class="col-md-6">
-                        <select id="idregional" name="regional">
-                            <option value="" data-token=""> Seleccione Regional </option>
-                            <div class="dropdown-menu" role="menu">
-                                @foreach (dynamic regional in ViewBag.regionales)
-                                                                {
-                                <option value="@regional.Codigo">@regional.Descripcion</option>
-
-            }
-                            </div>
-                        </select>
-                    </div>
-                </div>
-                <div class="clear"></div>
-
-                <p style="font-size:5px">
-                    <br />
-                </p>
+                <table style="width: 100%">
+                    <colgroup>
+                        <col span="1" style="width: 15%;">
+                        <col span="1" style="width: 85%;">
+                    </colgroup>
 
 
 
+                    <!-- Put <thead>, <tbody>, and <tr>'s here! -->
+                    <tbody>
+                        <tr>
+                            <td>Tarjeta Ecopetrol :</td>
+                            <td><input style="width:100%;" title="Número de su tarjeta de acceso a Ecopetrol" name="idlenel" id="idlenel" /></td>
+                        </tr>
+                        <tr>
+                            <td>Nombre :</td>
+                            <td><input style="width:100%;" title="Nombre completo" name="name" id="name" /></td>
+                        </tr>
+                        <tr>
+                            <td>Apellidos :</td>
+                            <td><input style="width:100%;" title="Apellidos completos" name="lastname" id="lastname" /></td>
+                        </tr>
 
+                        <tr>
+                            <td>Tipo documento :</td>
+                            <td>
 
-                <div class="row">
+                                <select name="tipdoc">
+                                    <option value="" data-token=""> Tipo Documento </option>
+                                    <div class="dropdown-menu" role="menu">
+                                        @foreach (dynamic Tipodoc in ViewBag.tiposdoc)
+                                        {
+                                            <option value="@Tipodoc.codigo">@Tipodoc.descripcion</option>
 
-                    <div class="col-md-6">
-                        <select name="instalacion">
-                            <option value="" data-token=""> Seleccione Instalación </option>
-                            <div class="dropdown-menu" role="menu">
-                                @foreach (dynamic instalacion in ViewBag.instalaciones)
-            {
-                                    <option value="@instalacion.Codigo">@instalacion.Descripcion</option>
+                                        }
+                                    </div>
+                                </select>
 
-            }
-                            </div>
-                        </select>
-                    </div>
-                </div>
-                <div class="clear"></div>
+                            </td>
+                        </tr>
 
-                <p style="font-size:5px">
-                    <br />
-                </p>
+                        <tr>
+                            <td>Documento :</td>
+                            <td><input style="width:100%;" title="Número de documento de identidad" name="documento" id="documento" /></td>
+                        </tr>
+                    </tbody>
+                </table>
 
-
-                <div class="form-group"><input class="form-control" type="text" name="ciudad" autocomplete="off" placeholder="Ciudad" /></div>
-
-                <div class="form-group"><input class="form-control" type="text" name="Email" autocomplete="off" placeholder="EMail" /></div>
+                <br />
 
                 <div>
                     @foreach (dynamic texto in ViewBag.textoEnr)
-            {
+                    {
                         <p>@texto.Pregunta</p>
                         <p>@texto.Texto</p>
                         <p>
                             <input type="radio" name="bioseguridad" value="Si"> Si
                             <input type="radio" name="bioseguridad" value="No"> No
                         </p>
-            }
+                    }
                 </div>
 
-                <p style="font-size:15px">
-                    <br />
-                </p>
+                <br />
 
                 <input type="submit" value="EnviarEmp" class="btn btn-block btn-primary" />
 
-             }
+            }
+
 
 
             <p style="font-size:15px">
                 Con el ánimo que pueda ingresar a través de mecanismo de reconocimiento facial y control térmico digital y sin contacto con nadie, por favor carga aquí la foto con las siguientes características:
-                Nombrar la foto con su numero de registro o cedula.
+                Nombrar la foto con su numero de registro o cédula.
             </p>
 
             <p style="font-size:12px">
@@ -219,13 +201,11 @@
 
                     <div id="preview" class="img">
 
-
-
                     </div>
 
                     <div>
                         <p>Imagen procesada</p>
-                        <img id="imgproc" src="" alt="Red dot" />
+                        <img width="220" height="220" id="imgproc" src="" alt="Red dot" />
                     </div>
 
                     <p style="font-size:10px">
@@ -244,20 +224,72 @@
 
                 </div>
             </form>
-            
+
 
         </div>
-    </div>
+            </div>
 
 </div>
 
 <script>
+
+
+
 
             var result = [];
 
             //$(function () {
 
            // });
+
+
+    function getval(val) {
+        //alert(val);
+        //window.location.href = "/Enrol/refreshInstal?id=" + val;
+
+        fetch("@Url.Content("~/Enrol/GetPersonDetails")" + "?Id=" + val)
+        .then(function (result) {
+            if (result.ok) {
+                return result.json();
+
+            }
+        })
+            .then(function (data) {
+                console.log(data);
+                cbo = document.getElementById("instalacion");
+                cbo.innerHTML = "";
+                data.forEach(function (element) {
+                    let opt = document.createElement("option");
+                    opt.appendChild(document.createTextNode(element.descripcion));
+                    opt.value = element.codigo;
+                    cbo.appendChild(opt);
+                });
+            })
+    }
+
+    $("instalacion1").change(function () {
+
+        console.log("prueba");
+
+               var  value = $("#Id").val();
+               //$.get(URL,data,function(data,status,xhr),dataType)
+               $.ajax({
+            url: url2,
+            type: 'POST',
+            data: {
+                Content: contentFull
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                CustomAlert.render(XMLHttpRequest);
+                CustomAlert.render(textStatus);
+                CustomAlert.render(errorThrown);
+                CustomAlert.render("Error while posting SendResult");
+            },
+            success: function (result) {CustomAlert.render("Yey?");
+            }
+
+        });
+            });
 
             $('#registrar').on('click', myFunction);
 

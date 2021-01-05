@@ -37,7 +37,7 @@ using System;
 using Newtonsoft.Json;
 using System.Drawing;
 using System.Drawing.Imaging;
-
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace AspStudio.Controllers
 {
@@ -100,19 +100,19 @@ namespace AspStudio.Controllers
         [HttpGet]
         public ViewResult Index()
         {
-            var dispositivos = dbContext.Empresas;
+            var dispositivos = dbContext.TiposDoc;
 
-            List<dynamic> empresas = new List<dynamic>();
-            dynamic empresa;
+            List<dynamic> tiposdoc = new List<dynamic>();
+            dynamic tipodoc;
 
             try
             {
                 foreach (var dispositivo in dispositivos)
                 {
-                    empresa = new ExpandoObject();
-                    empresa.codigo = dispositivo.codigo;
-                    empresa.descripcion = dispositivo.descripcion;
-                    empresas.Add(empresa);
+                    tipodoc = new ExpandoObject();
+                    tipodoc.codigo = dispositivo.codigo;
+                    tipodoc.descripcion = dispositivo.descripcion;
+                    tiposdoc.Add(tipodoc);
                 }
             }
             catch (System.Exception e)
@@ -120,8 +120,8 @@ namespace AspStudio.Controllers
                 System.Console.WriteLine("Error generando lista" + e.Message + e.StackTrace);
             }
             
-            System.Console.WriteLine(empresas);
-            ViewBag.empresas = empresas;
+            System.Console.WriteLine(tiposdoc);
+            ViewBag.tiposdoc = tiposdoc;
 
 
 
@@ -131,6 +131,8 @@ namespace AspStudio.Controllers
 
             List<dynamic> regionales = new List<dynamic>();
             dynamic regional;
+
+            
 
             try
             {
@@ -153,7 +155,7 @@ namespace AspStudio.Controllers
 
 
 
-
+            
             var regInstalaciones = dbContext.Instalaciones;
 
             List<dynamic> instalaciones = new List<dynamic>();
@@ -161,13 +163,12 @@ namespace AspStudio.Controllers
 
             try
             {
-                foreach (var registro in regInstalaciones)
-                {
+                
                     instalacion = new ExpandoObject();
-                    instalacion.Codigo = registro.Codigo;
-                    instalacion.Descripcion = registro.Descripcion;
+                    instalacion.Codigo = 0;
+                    instalacion.Descripcion = "";
                     instalaciones.Add(instalacion);
-                }
+                
             }
             catch (System.Exception e)
             {
@@ -176,7 +177,7 @@ namespace AspStudio.Controllers
 
             System.Console.WriteLine(instalaciones);
             ViewBag.instalaciones = instalaciones;
-
+            
 
 
 
@@ -330,18 +331,36 @@ namespace AspStudio.Controllers
 
 
 
+        public ActionResult IngresoEmployee(string badgeid, string name, string lastname, string tipodoc, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad, string EMail, string metadatos, bool aceptaterminos)
+        {
 
 
 
+               Models.EnrolData empleado = new Models.EnrolData();
 
+            empleado.Badge_id = badgeid;
+            empleado.firstName = name;
+            empleado.lastName = lastname;
+            empleado.tipo_doc = tipodoc;
+            empleado.documento = documento;
+            empleado.acepta_terminos = aceptaterminos;
+            empleado.empresa = empresa;
+            empleado.Regional = regional;
+            empleado.Instalacion = instalacion;
+            empleado.Ciudad = Ciudad;
+            empleado.SSNO = "";
+            empleado.IdStatus = "";
+            empleado.Status = "";
+            empleado.created = DateTime.Now;
+            empleado.Metadatos = metadatos;
 
-        [HttpPost]
+            var mensaje= CreateEnrol(empleado);
 
         public ActionResult IngresoEmployee(string badge_id, string name, string lastname, string documento, string empresa, Int16 regional, Byte instalacion, string Ciudad)
         {
 
-            try
-            {
+            //dbContext.EnrolDatas.Add(empleado);
+            //dbContext.SaveChanges();
 
                 EnrolTemp empleado = new EnrolTemp();
 
@@ -357,12 +376,8 @@ namespace AspStudio.Controllers
                 empleado.IdStatus = "";
                 empleado.Status = "";
 
-                dbContext.EnrolTemporal.Add(empleado);
-                dbContext.SaveChanges();
 
-                return RedirectToAction("Logout", "Account");
 
-            }
 
             catch (Exception ex)
             {
@@ -370,11 +385,8 @@ namespace AspStudio.Controllers
                 System.Console.WriteLine(ex.Message);
                 return RedirectToAction("Index", "Enrol");
 
-            }
 
-            
 
-        }
 
 
 
@@ -425,6 +437,68 @@ namespace AspStudio.Controllers
             }
 
             return (imagePath);
+        }
+
+        [HttpGet]
+
+        public JsonResult GetPersonDetails(int Id)
+        {
+            var InstalacQuery =
+            from Instalac in dbContext.Instalaciones
+            where Instalac.Regional == Id
+            select new { Instalac.Codigo, Instalac.Descripcion };
+
+            
+            return Json(InstalacQuery);
+        }
+
+        public ActionResult refreshInstal(int Id)
+        {
+            /*
+            var InstalacQuery =
+            from Instalac in dbContext.Instalaciones
+            where Instalac.Regional == Id
+            select Instalac;*/
+
+            var InstalacQuery =
+            from Instalac in dbContext.Instalaciones
+            where Instalac.Regional == Id
+            select new { Instalac.Codigo, Instalac.Descripcion };
+
+            ViewBag.instalaciones = InstalacQuery;
+            /*
+            var regInstalaciones = dbContext.Instalaciones;
+
+            List<dynamic> instalaciones = new List<dynamic>();
+            dynamic instalacion;
+
+            try
+            {
+                foreach (var registro in regInstalaciones)
+                {
+
+                    if (registro.Regional == Id)
+                    { 
+                        instalacion = new ExpandoObject();
+                        instalacion.Codigo = registro.Codigo;
+                        instalacion.Descripcion = registro.Descripcion;
+                        instalaciones.Add(instalacion);
+                    }
+                }
+            }
+            catch (System.Exception e)
+            {
+                System.Console.WriteLine("Error generando lista" + e.Message + e.StackTrace);
+            }
+
+            System.Console.WriteLine(instalaciones);
+            ViewBag.instalaciones = instalaciones;
+            */
+
+
+
+
+            return View();
         }
 
         /*
