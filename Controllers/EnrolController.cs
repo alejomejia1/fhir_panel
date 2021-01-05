@@ -50,21 +50,22 @@ namespace AspStudio.Controllers
     public class EnrolData
     {
         // public string idlenel { get; set; }
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
 
-        public string Documento { get; set; }
+        public string documento { get; set; }
         public string tipoDocumento { get; set; }
-        public string Empresa { get; set; }
-        public short Regional { get; set; }
-        public byte Instalacion { get; set; }
-        public string Ciudad { get; set; }
-        public string SSNO { get; set; }
-        public string IdStatus { get; set; }
-        public string Status { get; set; }
-        public string Badge_id { get; set; }
-        public string Metadatos { get; set; }
-        public Boolean acepta_terminos { get; set; }
+        public string empresa { get; set; }
+        public short regional { get; set; }
+        public byte instalacion { get; set; }
+        public string ciudad { get; set; }
+        public string ciudadOrigen { get; set; }
+        public string ssno { get; set; }
+        public string idStatus { get; set; }
+        public string status { get; set; }
+        public string badgeId { get; set; }
+        public string metadatos { get; set; }
+        public Boolean aceptaTerminos { get; set; }
         public string image { get; set; }
         public string origen { get; set; }
 
@@ -293,7 +294,7 @@ namespace AspStudio.Controllers
             } catch (Exception e) {
                 System.Console.WriteLine("Error :" + e.Message + e.StackTrace);
                 // Retorna Json indicando que fue exitoso
-                return new {success=false, message = "Error consutando la base de datos"};
+                return new {success=false, message = "Database communication error"};
             }
         }
 
@@ -305,58 +306,70 @@ namespace AspStudio.Controllers
             
         public Object CreateEnrol([FromBody] EnrolData mensaje)
         {
-            System.Console.WriteLine(mensaje);
-            // HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "*");
-            // HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
-            // HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            var employeeDb = dbContext.EnrolTemporal.FirstOrDefault(p => p.Badge_id == mensaje.Badge_id);
+            
+            if (mensaje != null){
+                System.Console.WriteLine(mensaje);
 
-            System.Console.WriteLine(employeeDb);
+                try {
 
-            try {
+                    dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+                    var employeeDb = dbContext.EnrolTemporal.FirstOrDefault(p => p.Badge_id == mensaje.badgeId);
 
-                EnrolTemp empleado = new EnrolTemp();
-                DateTime localDate = DateTime.Now;  
+                    System.Console.WriteLine(employeeDb);
 
-                var imageUrl = ExportToImage(mensaje.image, mensaje.Documento);
-                
+                    EnrolTemp empleado = new EnrolTemp();
+                    DateTime localDate = DateTime.Now;  
 
-                // empleado.IdLenel = mensaje.idlenel;
-                empleado.Badge_id = mensaje.Badge_id;
-                empleado.FirstName = mensaje.FirstName;
-                empleado.LastName = mensaje.LastName;
-                empleado.Documento = mensaje.Documento;
-                empleado.tipoDocumento = mensaje.tipoDocumento;
-                empleado.Empresa = mensaje.Empresa;
-                empleado.Regional = (short)mensaje.Regional;
-                empleado.Instalacion = mensaje.Instalacion;
-                empleado.Metadatos = mensaje.Metadatos;
-                empleado.Ciudad = mensaje.Ciudad;
-                empleado.aceptaTerminos = mensaje.acepta_terminos;
-                empleado.imageUrl = imageUrl;
-                empleado.SSNO = "";
-                empleado.IdStatus = "";
-                empleado.Status = "";
-                empleado.origen = mensaje.origen;
-                empleado.Created = localDate;
+                    var imageUrl = "";
+                    if (mensaje.image != "") {
+                        imageUrl = ExportToImage(mensaje.image, mensaje.documento);
+                    } else {
+                        imageUrl = "/Enrols/avatar.png";
+                    }
+                    
+                    
 
-                if(employeeDb != null) {
-                    empleado.Id = employeeDb.Id;
-                    dbContext.EnrolTemporal.Update(empleado);
-                    dbContext.SaveChanges();
-                } else {
-                    dbContext.EnrolTemporal.Add(empleado);
-                    dbContext.SaveChanges();
+                    // empleado.IdLenel = mensaje.idlenel;
+                    empleado.Badge_id = mensaje.badgeId;
+                    empleado.FirstName = mensaje.firstName;
+                    empleado.LastName = mensaje.lastName;
+                    empleado.Documento = mensaje.documento;
+                    empleado.tipoDocumento = mensaje.tipoDocumento;
+                    empleado.Empresa = mensaje.empresa;
+                    empleado.Regional = (short)mensaje.regional;
+                    empleado.Instalacion = mensaje.instalacion;
+                    empleado.Metadatos = mensaje.metadatos;
+                    empleado.Ciudad = mensaje.ciudad;
+                    empleado.ciudadOrigen = mensaje.ciudadOrigen;
+                    empleado.aceptaTerminos = mensaje.aceptaTerminos;
+                    empleado.imageUrl = imageUrl;
+                    empleado.SSNO = "";
+                    empleado.IdStatus = "";
+                    empleado.Status = "";
+                    empleado.origen = mensaje.origen;
+                    empleado.Created = localDate;
+
+                    if(employeeDb != null) {
+                        empleado.Id = employeeDb.Id;
+                        empleado.Created = employeeDb.Created;
+                        empleado.Updated = localDate;
+                        dbContext.EnrolTemporal.Update(empleado);
+                        dbContext.SaveChanges();
+                    } else {
+                        dbContext.EnrolTemporal.Add(empleado);
+                        dbContext.SaveChanges();
+                    }
+
+                    return Json(new { success = true });
+
+                } catch (Exception ex) {
+                    //throw ex;
+                    return Json(new { success = false, msg = ex.Message });
+
                 }
-                
 
-                return Json(new { success = true });
-
-            } catch (Exception ex) {
-                //throw ex;
-                return Json(new { success = false, msg = ex.Message });
-
+            } else {
+                return Json(new { success = false, msg = "No valid data present" });
             }
 
 
@@ -423,6 +436,7 @@ namespace AspStudio.Controllers
             // Define la ruta del directorio y de la imagen
             var folderPath = "wwwroot/Enrols/";
             var imagePath = folderPath + imageName;
+            var imageUrl = "/Enrols/" + imageName;
 
             // Guarda la imagen en el sistema de archivos
             // using (Image image = Image.FromStream(new MemoryStream(bytes)))
@@ -451,7 +465,7 @@ namespace AspStudio.Controllers
 
             }
 
-            return (imagePath);
+            return (imageUrl);
         }
 
         /*

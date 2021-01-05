@@ -51,6 +51,9 @@ namespace AspStudio.Models
         [Column("created")]
         public DateTime? Created { get; set; }
 
+        [Column("updated")]
+        public DateTime? Updated { get; set; }
+
         [Column("ciudadEnroll")]
         public string Ciudad { get; set; }
 
@@ -61,7 +64,7 @@ namespace AspStudio.Models
         public Byte Instalacion { get; set; }
 
         [Column("CiudadOrigen")]
-        public string CiudadOrigen { get; set; }
+        public string ciudadOrigen { get; set; }
 
         [Column("Metadatos")]
         public string Metadatos { get; set; }
