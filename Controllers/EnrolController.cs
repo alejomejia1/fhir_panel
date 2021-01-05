@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Dynamic;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Cors;
 
 // using System.Net.Mqtt;
 using MQTTnet;
@@ -14,7 +16,10 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-using System.Net;
+// using System.Net.Http;
+// using System.Web.Http;
+using System.IO;
+using System.Text;
 
 
 //using System.Web;
@@ -28,15 +33,15 @@ using System.Text.Json.Serialization;
 // Database connection
 
 
-
-using System.IO;
-
 using Microsoft.AspNetCore.Http;
 using System.Linq;
 using System;
 using Newtonsoft.Json;
 using System.Drawing;
 using System.Drawing.Imaging;
+
+using System.Web;
+using System.Web.Http.Filters;
 
 
 namespace AspStudio.Controllers
@@ -49,25 +54,19 @@ namespace AspStudio.Controllers
         public string LastName { get; set; }
 
         public string Documento { get; set; }
-
+        public string tipoDocumento { get; set; }
         public string Empresa { get; set; }
-
-        public Int16 Regional { get; set; }
+        public short Regional { get; set; }
         public byte Instalacion { get; set; }
-
         public string Ciudad { get; set; }
-
         public string SSNO { get; set; }
-
         public string IdStatus { get; set; }
-
         public string Status { get; set; }
-
         public string Badge_id { get; set; }
-
         public string Metadatos { get; set; }
-
-        public bool acepta_terminos { get; set; }
+        public Boolean acepta_terminos { get; set; }
+        public string image { get; set; }
+        public string origen { get; set; }
 
     }
 
@@ -80,6 +79,17 @@ namespace AspStudio.Controllers
         public string LastName { get; set; }
     }
 
+    public class AllowCrossSiteJsonAttribute : ActionFilterAttribute
+    {
+        public override void OnActionExecuted(HttpActionExecutedContext actionExecutedContext)
+        {
+            if (actionExecutedContext.Response != null)
+                actionExecutedContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+
+            base.OnActionExecuted(actionExecutedContext);
+        }
+    }
+    [AllowCrossSiteJson]
     public class EnrolController : Controller
     {
         // Inyecta la instancia de MQTTnet (mqttClient) que fue creada como
@@ -245,14 +255,19 @@ namespace AspStudio.Controllers
 
         [HttpGet]
         [Route("/api/get_enrol")]
+        [EnableCors("CorsPolicy")]
+        // [DisableCors]
         public  Object getEnrol(EnrolSearch enrolsearch) {
 
             try {
+                // HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "*");
+                // HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+                // HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
                 var result = from o in dbContext.EnrolTemporal
                             select o;
                 
-                // if (enrolsearch.idlenel != null)
-                //     result = result.Where(c => c.IdLenel == enrolsearch.idlenel);
+                if (enrolsearch.BadgeId != null)
+                    result = result.Where(c => c.Badge_id == enrolsearch.BadgeId);
                 
                 if (enrolsearch.Documento != null)
                     result = result.Where(c => c.Documento == enrolsearch.Documento);
@@ -266,6 +281,9 @@ namespace AspStudio.Controllers
                 //var result = dbContext.EnrolTemporal.FirstOrDefault(p => p.IdLenel == IdLenel);
                 if (result != null)
                 {
+                     
+                    //  Access-Control-Allow-Origin: *
+
                     // Retorna Json indicando que ya existe
                     return new {success=true, data=result};
                 } else {
@@ -282,41 +300,60 @@ namespace AspStudio.Controllers
 
         [HttpPost]
         [Route("/api/create_enrol")]
+        [EnableCors("CorsPolicy")]
+        // [DisableCors]
             
         public Object CreateEnrol([FromBody] EnrolData mensaje)
         {
             System.Console.WriteLine(mensaje);
+            // HttpContext.Response.Headers.Add("Access-Control-Allow-Methods", "*");
+            // HttpContext.Response.Headers.Add("Access-Control-Allow-Headers", "Content-Type");
+            // HttpContext.Response.Headers.Add("Access-Control-Allow-Origin", "*");
+            dbContext.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            var employeeDb = dbContext.EnrolTemporal.FirstOrDefault(p => p.Badge_id == mensaje.Badge_id);
 
-            try
-            {
+            System.Console.WriteLine(employeeDb);
+
+            try {
 
                 EnrolTemp empleado = new EnrolTemp();
                 DateTime localDate = DateTime.Now;  
+
+                var imageUrl = ExportToImage(mensaje.image, mensaje.Documento);
+                
 
                 // empleado.IdLenel = mensaje.idlenel;
                 empleado.Badge_id = mensaje.Badge_id;
                 empleado.FirstName = mensaje.FirstName;
                 empleado.LastName = mensaje.LastName;
                 empleado.Documento = mensaje.Documento;
+                empleado.tipoDocumento = mensaje.tipoDocumento;
                 empleado.Empresa = mensaje.Empresa;
-                empleado.Regional = mensaje.Regional;
+                empleado.Regional = (short)mensaje.Regional;
                 empleado.Instalacion = mensaje.Instalacion;
                 empleado.Metadatos = mensaje.Metadatos;
                 empleado.Ciudad = mensaje.Ciudad;
-                empleado.acepta_terminos = mensaje.acepta_terminos;
+                empleado.aceptaTerminos = mensaje.acepta_terminos;
+                empleado.imageUrl = imageUrl;
                 empleado.SSNO = "";
                 empleado.IdStatus = "";
                 empleado.Status = "";
+                empleado.origen = mensaje.origen;
                 empleado.Created = localDate;
-                dbContext.EnrolTemporal.Add(empleado);
-                dbContext.SaveChanges();
+
+                if(employeeDb != null) {
+                    empleado.Id = employeeDb.Id;
+                    dbContext.EnrolTemporal.Update(empleado);
+                    dbContext.SaveChanges();
+                } else {
+                    dbContext.EnrolTemporal.Add(empleado);
+                    dbContext.SaveChanges();
+                }
+                
 
                 return Json(new { success = true });
 
-            }
-
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 //throw ex;
                 return Json(new { success = false, msg = ex.Message });
 
@@ -325,12 +362,6 @@ namespace AspStudio.Controllers
 
 
         }
-
-
-
-
-
-
 
 
 
@@ -378,44 +409,40 @@ namespace AspStudio.Controllers
 
 
 
-        protected string ExportToImage(string JsonMsg)
+        protected string ExportToImage(string imagen, string documento)
         {
-            // Convertir el string JSON a un objeto
-            var mensaje = JsonConvert.DeserializeObject<dynamic>(JsonMsg);
-
-
-            // extraer la informacion en formato base64 de la imagen (incluidas las cabeceras)
-            string base64 = mensaje.datas.imageFile.ToString();
-
-            // Crea un timestamp
-            DateTime localDate = DateTime.Now;
-
-            // Separa la cabecera de los datos de la imagen
-            var image64 = base64.Substring(base64.LastIndexOf(',') + 1);
 
             //  Convierte la cadena base64 en un arreglo de bytes
-            byte[] bytes = Convert.FromBase64String(image64);
-
-            // Obtiene la fecha del mensaje (Esto es para el mensaje MQTT)
-            var fecha = mensaje.datas.time.ToString();
-            fecha.Replace("/", "_");
-            System.Console.WriteLine(fecha);
+            byte[] bytes = Convert.FromBase64String(imagen);
 
             // Define el nombre del archivo a guardar (Nombre de la persona + id dispositivo + fecha)
-            var nombre = (mensaje.datas.name != "") ? mensaje.datas.name : "Desconocido";
-            var imageName = mensaje.device_id + " " + nombre + " " + mensaje.datas.temperature + '_' + fecha + ".jpg";
+
+            var imageName = documento + ".jpg";
             System.Console.WriteLine(imageName);
 
             // Define la ruta del directorio y de la imagen
-            var folderPath = "wwwroot/Registers/";
+            var folderPath = "wwwroot/Enrols/";
             var imagePath = folderPath + imageName;
 
             // Guarda la imagen en el sistema de archivos
-            using (Image image = Image.FromStream(new MemoryStream(bytes)))
+            // using (Image image = Image.FromStream(new MemoryStream(bytes)))
+            // {
+            //     try
+            //     {
+            //         image.Save(imagePath, ImageFormat.Jpeg);  // Or Png
+            //     }
+            //     catch (System.Exception e)
+            //     {
+            //         System.Console.WriteLine("Error saving " + imagePath + " in filesystem" + e.Message + e.StackTrace);
+            //     }
+
+            // }
+            using (var imageFile = new FileStream(Path.Combine(folderPath,imageName), FileMode.Create))
             {
                 try
                 {
-                    image.Save(imagePath, ImageFormat.Jpeg);  // Or Png
+                    imageFile.Write(bytes, 0, bytes.Length);
+                    imageFile.Flush();
                 }
                 catch (System.Exception e)
                 {

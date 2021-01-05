@@ -48,6 +48,7 @@ namespace AspStudio.Data
             builder.Entity<RepoEnrolamiento>().HasNoKey();
             builder.Entity<RepoEnrollDevice>().HasNoKey();
             builder.Entity<SopoRecoPersona>().HasNoKey();
+            builder.Entity<EnrolTemp>().HasKey(a => a.Id);
             //builder.Entity<Person>().
             //    HasOne(p => p.Employee);
         }

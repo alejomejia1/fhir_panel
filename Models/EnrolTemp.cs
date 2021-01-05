@@ -36,6 +36,9 @@ namespace AspStudio.Models
         [Column("status")]
         public string Status { get; set; }
 
+        [Column("tipo_doc")]
+        public string tipoDocumento { get; set; }
+
         [Column("documento")]
         public string Documento { get; set; }
 
@@ -67,7 +70,10 @@ namespace AspStudio.Models
         public string Badge_id { get; set; }
 
         [Column("acepta_terminos")]
-        public Boolean acepta_terminos { get; set; }
+        public Boolean aceptaTerminos { get; set; }
+
+        [Column("Origen")]
+        public string origen { get; set; }
 
     }
 }

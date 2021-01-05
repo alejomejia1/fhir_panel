@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -75,9 +77,10 @@ namespace studio
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
             
-            services.AddDbContextPool<ApplicationDbContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))
-            );
+            services.AddDbContextPool<ApplicationDbContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
+                options.EnableSensitiveDataLogging(true);
+            });
 
             //services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddAuthentication(
@@ -98,11 +101,15 @@ namespace studio
                     builder
                         .AllowAnyMethod()
                         .AllowAnyHeader()
-                        .AllowAnyOrigin()
-                        .AllowCredentials();
+                        .AllowAnyOrigin();
+                        // .AllowCredentials();
                 }));
 
-            
+            services.AddLogging(loggingBuilder => {
+                loggingBuilder.AddConsole()
+                    .AddFilter(DbLoggerCategory.Database.Command.Name, LogLevel.Information);
+                loggingBuilder.AddDebug();
+            });
 
             // Servicio de mensajeria entre server y client
             services.AddSignalR();
@@ -126,12 +133,17 @@ namespace studio
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            
+
             app.UseHttpsRedirection();
 
             app.UseResponsiveFileManager();
 
             app.UseStaticFiles();
             app.UseRouting();
+
+            app.UseCors("CorsPolicy");
 
             app.UseCookiePolicy();
             app.UseAuthentication();
