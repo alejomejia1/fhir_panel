@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace AspStudio.Models
 {
 
-    // Definicion del Objeto Empresas (tabla para almacenar la informacion de Empresas)
-    [Table("Empresas")]
-    public class Empresa
+    // Definicion del Objeto TipoDoc (tabla para almacenar la informacion de Tipos de documento)
+    [Table("Tipos_Doc")]
+    public class Tipodoc
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("codigo")]
@@ -19,6 +19,5 @@ namespace AspStudio.Models
 
         [Column("descripcion")]
         public string descripcion { get; set; }
-
     }
 }
