@@ -6,17 +6,30 @@ namespace DataConduitManager.Repositories.Logic
 {
     public class DataConduITMgr : IDataConduITMgr
     {
-        public ManagementPath path { get; set; }
-        public ManagementPath clave { get; set; }
+        #region PROPIEDADES
+        public string serverPath { get; set; }
+        public string serverUser { get; set; }
+        public string serverPassword { get; set; }
+        #endregion
+
+        #region CONSTRUCTOR 
 
         public DataConduITMgr()
         {
-            /*PATH PARA CONECTAR A DATACONDUIT */
-            path = new ManagementPath("\\\\10.11.34.96\\root\\OnGuard"); 
-            //VERIFICAR SI ESTO SERA UN PARAMETRO O SE FIJARA EN UN ARCHIVO DE CONFIGURACION EN CADA LUGAR DONDE SE EJECUTE 
+            this.serverPath = @"\\.\root\OnGuard"; 
+        }
+        #endregion
+
+        #region METODOS
+        public ManagementScope GetManagementScope() {
+            return CreateDataConduitScope();
         }
 
-        public ManagementScope GetManagementScope() {
+        public ManagementScope GetManagementScope(string path, string user, string pass)
+        {
+            this.serverPath = path;
+            this.serverUser = user;
+            this.serverPassword = pass;
             return CreateDataConduitScope();
         }
 
@@ -24,12 +37,14 @@ namespace DataConduitManager.Repositories.Logic
         {
             /*ESTABLECE UN SCOPE DE DATACONDUIT PARA REALIZAR UNA ACCION*/
             ConnectionOptions conexion = new ConnectionOptions();
-            conexion.Username = "Administrator";//SE PARAMETRIZAR EN UN ARCHIVO DE CONFIGURACION
-            conexion.Password = "Ut1ndr40nc0r1732";//SE PARAMETRIZAR EN UN ARCHIVO DE CONFIGURACION
+            if (!string.IsNullOrEmpty(this.serverUser))
+                conexion.Username = this.serverUser;
+            if (!string.IsNullOrEmpty(this.serverPassword))
+                conexion.Password = this.serverPassword;
             conexion.Authentication = AuthenticationLevel.Default;
             conexion.Impersonation = ImpersonationLevel.Impersonate;
             conexion.EnablePrivileges = true;
-            return new ManagementScope(path, conexion);
+            return new ManagementScope(this.serverPath, conexion);
         }
 
         public string ReceiveEvent(ManagementScope scope)
@@ -62,5 +77,6 @@ namespace DataConduitManager.Repositories.Logic
                 return "ERROR";
             }
         }
+        #endregion
     }
 }

@@ -11,17 +11,18 @@ namespace DataConduitManager.Repositories.Logic
     {
         private readonly IDataConduITMgr _dataConduITMgr;
 
-        #region Constructor
+        #region CONSTRUCTOR
         public Reader(IDataConduITMgr dataConduITMgr)
         {
             _dataConduITMgr = dataConduITMgr;
         }
         #endregion
 
-        #region Metodos
-        public async Task<ManagementObjectSearcher> GetReaderData(string panelID, string readerID) 
+        #region METODOS
+        public async Task<ManagementObjectSearcher> GetReaderData(string panelID, string readerID, 
+            string path, string user, string pass) 
         {
-            ManagementScope readerScope = _dataConduITMgr.GetManagementScope();
+            ManagementScope readerScope = _dataConduITMgr.GetManagementScope(path, user, pass);
             if (readerScope == null) { throw new Exception("No fue posible establecer conexion con OnGuard"); }
 
             ObjectQuery readerSearcher = new ObjectQuery("SELECT * FROM Lnl_Reader WHERE PanelID='" + panelID + "' " +
@@ -32,11 +33,11 @@ namespace DataConduitManager.Repositories.Logic
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        public async Task<int> ReaderGetMode (string panelID, string readerID)
+        public async Task<int> ReaderGetMode (string panelID, string readerID, string path, string user, string pass)
         {
             try
             {
-                ManagementScope readerScope = _dataConduITMgr.GetManagementScope();
+                ManagementScope readerScope = _dataConduITMgr.GetManagementScope(path, user, pass);
 
                 ObjectQuery readerSearcher = new ObjectQuery("SELECT * FROM Lnl_Reader WHERE PanelID='" + panelID + "' " +
                     "AND ReaderID='" + readerID + "'");
@@ -67,10 +68,12 @@ namespace DataConduitManager.Repositories.Logic
 
         }
 
-        public async Task<bool> ReaderSetMode(string panelID, string readerID, IReader.readerMode modeID) {
+        public async Task<bool> ReaderSetMode(string panelID, string readerID, IReader.readerMode modeID, 
+            string path, string user, string pass) 
+        {
             try
             {
-                ManagementScope readerScope = _dataConduITMgr.GetManagementScope();
+                ManagementScope readerScope = _dataConduITMgr.GetManagementScope(path, user, pass);
 
                 ObjectQuery readerSearcher = new ObjectQuery("SELECT * FROM Lnl_Reader WHERE PanelID='" + panelID + "' " +
                     "AND ReaderID='" + readerID + "'");
@@ -95,10 +98,10 @@ namespace DataConduitManager.Repositories.Logic
             }
         }
         
-        public async Task<bool> OpenDoor(string panelID, string readerID) {
+        public async Task<bool> OpenDoor(string panelID, string readerID, string path, string user, string pass) {
             try
             {
-                ManagementScope readerScope = _dataConduITMgr.GetManagementScope();
+                ManagementScope readerScope = _dataConduITMgr.GetManagementScope(path, user, pass);
 
                 ObjectQuery readerSearcher = new ObjectQuery("SELECT * FROM Lnl_Reader WHERE PanelID='" + panelID + "' " +
                     "AND ReaderID='" + readerID +"'");
@@ -121,11 +124,11 @@ namespace DataConduitManager.Repositories.Logic
 
         }
 
-        public async Task<object> BlockDoor(string panelID, string readerID)
+        public async Task<object> BlockDoor(string panelID, string readerID, string path, string user, string pass)
         {
             try
             {
-                ManagementScope readerScope = _dataConduITMgr.GetManagementScope();
+                ManagementScope readerScope = _dataConduITMgr.GetManagementScope(path, user, pass);
 
                 ObjectQuery readerSearcher = new ObjectQuery("SELECT * FROM Lnl_Reader WHERE PanelID='" + panelID + "' " +
                     "AND ReaderID='" + readerID + "'");

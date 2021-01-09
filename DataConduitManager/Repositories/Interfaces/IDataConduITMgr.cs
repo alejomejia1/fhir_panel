@@ -7,11 +7,21 @@ namespace DataConduitManager.Repositories.Interfaces
 {
     public interface IDataConduITMgr
     {
+
         /// <summary>
-        /// Obtiene un scope de DataConduIT para ejecutar una accion sobre Lenel
+        /// Obtiene un scope de DataConduIT en servidor local para ejecutar una accion sobre Lenel
         /// </summary>
         /// <returns></returns>
         ManagementScope GetManagementScope();
+
+        /// <summary>
+        /// Obtiene un scope de DataConduIT en servidor remoto para ejecutar una accion sobre Lenel
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        ManagementScope GetManagementScope(string path, string user, string pass);
 
         string ReceiveEvent(ManagementScope scope);
     }

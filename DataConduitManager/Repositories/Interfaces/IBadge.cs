@@ -9,10 +9,13 @@ namespace DataConduitManager.Repositories.Interfaces
     public interface IBadge
     {
         /// <summary>
-        /// CREA UNA TARJETA NUEVA A UN USUARIO DEL SISTEMA EN LENEL
+        /// Crea un nuevo Badge en Lenel
         /// </summary>
         /// <param name="newBadge"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        Task<object> AddBadge(AddBadge_DTO newBadge);
+        Task<object> AddBadge(AddBadge_DTO newBadge, string path, string user, string pass);
     }
 }

@@ -10,31 +10,44 @@ namespace DataConduitManager.Repositories.Interfaces
     public interface ICardHolder
     {
         /// <summary>
-        /// CREA UN EMPLEADO NUEVA EN LENEL
+        /// Crea un nuevo CardHolder en Lenel
         /// </summary>
+        /// <param name="newCardHolder"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder);
+        Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder, string path, string user, string pass);
 
         /// <summary>
-        /// ACTUALIZA UN EMPLEADO EN LENEL
+        /// Actualiza un CardHolder en Lenel
         /// </summary>
         /// <param name="cardHolder"></param>
         /// <param name="idLenel"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idLenel);
+        Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idLenel, string path, string user, string pass);
 
         /// <summary>
-        /// Obtiene un empleado Tarjeta Habiente en LENEL
+        /// Obtiene un CardHolder en Lenel
         /// </summary>
         /// <param name="idLenel"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
         /// <returns></returns>
-        Task<ManagementObjectSearcher> GetCardHolder(string idLenel);
+        Task<ManagementObjectSearcher> GetCardHolder(string idLenel, string path, string user, string password);
 
         /// <summary>
-        /// Obtiene un visitante en Lenel
+        /// Obtiene un Visitor en Lenel
         /// </summary>
         /// <param name="idLenel"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        Task<object> GetVisitor(string idLenel);
+        Task<object> GetVisitor(string idLenel, string path, string user, string pass);
     }
 }

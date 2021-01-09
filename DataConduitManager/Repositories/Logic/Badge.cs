@@ -12,19 +12,19 @@ namespace DataConduitManager.Repositories.Logic
     {
         private readonly IDataConduITMgr _dataConduITMgr;
 
-        #region Constructor
+        #region CONSTRUCTOR
         public Badge(IDataConduITMgr dataConduITMgr)
         {
             _dataConduITMgr = dataConduITMgr;
         }
         #endregion
 
-        #region Métodos
-        public async Task<object> AddBadge(AddBadge_DTO newBadge)
+        #region METODOS
+        public async Task<object> AddBadge(AddBadge_DTO newBadge, string path, string user, string pass)
         {
             try
             {
-                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope();
+                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope(path, user, pass);
 
                 ManagementClass badgeClass = new ManagementClass(badgeScope, new ManagementPath("Lnl_Badge"), null);
 

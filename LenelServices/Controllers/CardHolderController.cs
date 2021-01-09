@@ -30,11 +30,11 @@ namespace LenelServices.Controllers
 
         // GET: api/CardHolder/5
         [HttpGet("/api/CardHolder/ObtenerEmpleado/{idLenel}")]
-/* Persona.. el tipo me debe definir si es visitante o empleado documento, sobrecarga badge number */
+        /* Persona.. el tipo me debe definir si es visitante o empleado documento, sobrecarga badge number */
         public async Task<object> ObtenerEmpleado(string idLenel)
         {
             try { return await _cardHolder_REP_LOCAL.ObtenerEmpleado(idLenel); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
+            catch (Exception ex) { return BadRequest("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); }
         }
 
         [HttpGet("/api/CardHolder/ObtenerVisitante/{idLenel}")]

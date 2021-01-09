@@ -13,28 +13,28 @@ namespace DataConduitManager.Repositories.Logic
     {
         private readonly IDataConduITMgr _dataConduITMgr;
 
-        #region constructor
+        #region CONSTRUCTOR
         public CardHolder(IDataConduITMgr dataConduITMgr)
         {
             _dataConduITMgr = dataConduITMgr;
         }
         #endregion
 
-        #region Metodos CardHolder
-        public async Task<ManagementObjectSearcher> GetCardHolder(string idLenel)
+        #region METODOS CARDHOLDER
+        public async Task<ManagementObjectSearcher> GetCardHolder(string idLenel, string path, string user, string password)
         {
-            ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope();
-            ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_CardHolder WHERE ID = " + idLenel);
+            ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope(path,user,password);
+            ObjectQuery cardHolderSearcher = new ObjectQuery(@"SELECT * FROM Lnl_CardHolder WHERE ID = '" + idLenel + "'");
             ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
 
             try { return getCardHolder; }
-            catch (Exception ex) { throw new Exception(ex.Message); }
+            catch (Exception ex) { throw new Exception("error: " + ex. Message + " " + ex.StackTrace + " " + ex.InnerException); }
 
         }
 
-        public async Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder)
+        public async Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder, string path, string user, string password)
         {
-            ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope();
+            ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope(path,user,password);
 
             ManagementClass cardHolderClass = new ManagementClass(cardHolderScope, new ManagementPath("Lnl_Cardholder"), null);
 
@@ -54,11 +54,11 @@ namespace DataConduitManager.Repositories.Logic
 
         }
 
-        public async Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idLenel)
+        public async Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idLenel, string path, string user, string password)
         {
             try
             {
-                ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope();
+                ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope(path, user, password);
                 ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_CardHolder WHERE ID = " + idLenel);
                 ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
 
@@ -88,10 +88,10 @@ namespace DataConduitManager.Repositories.Logic
         }
         #endregion
 
-        #region metodos Visitor
-        public async Task<object> GetVisitor(string idLenel)
+        #region METODOS VISITOR
+        public async Task<object> GetVisitor(string idLenel, string path, string user, string password)
         {
-            ManagementScope VisitorScope = _dataConduITMgr.GetManagementScope();
+            ManagementScope VisitorScope = _dataConduITMgr.GetManagementScope(path, user, password);
             ObjectQuery  visitorSearcher = new ObjectQuery("SELECT * FROM Lnl_Visitor WHERE ID = " + idLenel);
             ManagementObjectSearcher getVisitor = new ManagementObjectSearcher(VisitorScope, visitorSearcher);
 

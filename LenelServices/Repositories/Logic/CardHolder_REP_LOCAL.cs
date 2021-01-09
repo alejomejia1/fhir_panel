@@ -1,55 +1,73 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Management;
 using System.Threading.Tasks;
 using LenelServices.Repositories.Interfaces;
 using LenelServices.Repositories.DTO;
 using DataConduitManager.Repositories.Interfaces;
 using DataConduitManager.Repositories.DTO;
+using Microsoft.Extensions.Configuration;
 
 namespace LenelServices.Repositories.Logic
 {
     public class CardHolder_REP_LOCAL:ICardHolder_REP_LOCAL
     {
+        #region PROPIEDADES
         private readonly ICardHolder _cardHolder_REP;
+        private readonly IDataConduITMgr _dataConduITMgr;
+        private readonly IConfiguration _config;
+        private string _path;
+        private string _user;
+        private string _pass;
+        #endregion
 
-        #region Constructor
-        public CardHolder_REP_LOCAL(ICardHolder cardHolder_REP)
+        #region CONSTRUCTOR
+        public CardHolder_REP_LOCAL(ICardHolder cardHolder_REP, IDataConduITMgr dataConduITMgr, IConfiguration config)
         {
             _cardHolder_REP = cardHolder_REP;
+            _dataConduITMgr = dataConduITMgr;
+            _config = config;
+            _path = _config.GetSection("SERVER_PATH").Value.ToString();
+            _user = _config.GetSection("SERVER_USER").Value.ToString();
+            _pass = _config.GetSection("SERVER_PASSWORD").Value.ToString();
         }
         #endregion
 
-        #region Métodos
+        #region METODOS
         public async Task<object> CrearPersona(AddCardHolder_DTO newCardHolder)
         {
-            return await _cardHolder_REP.AddCardHolder(newCardHolder);
+            return await _cardHolder_REP.AddCardHolder(newCardHolder, _path, _user, _pass);
         }
 
-        public async Task<GetCardHolder_DTO> ObtenerEmpleado(string idLenel) {
-
+        public async Task<GetCardHolder_DTO> ObtenerEmpleado(string idLenel) 
+        {
+             
             GetCardHolder_DTO persona = new GetCardHolder_DTO();
-            ManagementObjectSearcher cardHolder =  await _cardHolder_REP.GetCardHolder(idLenel);
-
-            foreach (ManagementObject queryObj in cardHolder.Get())
+            ManagementObjectSearcher cardHolder = await _cardHolder_REP.GetCardHolder(idLenel, _path, _user, _pass);
+                
+            try
             {
-                persona.apellidos = queryObj["LASTNAME"].ToString();
-                persona.nombres = queryObj["FIRSTNAME"].ToString();
-                persona.ssno = queryObj["SSNO"].ToString();//personid
-                try { persona.status = queryObj["STATE"].ToString(); } catch { persona.status = null; }
-                try { persona.documento = queryObj["OPHONE"].ToString(); } catch { persona.documento = null; }
-                try { persona.empresa = queryObj["DIVISION"].ToString(); } catch { persona.empresa = null; }
-                try { persona.ciudad = queryObj["CITY"].ToString(); } catch { persona.ciudad = null; }
-                try { persona.email = queryObj["EMAIL"].ToString(); } catch { persona.email = null; }
-            }
+                foreach (ManagementObject queryObj in cardHolder.Get())
+                {
+                    try { persona.apellidos = queryObj["LASTNAME"].ToString(); } catch { persona.apellidos = null; }
+                    try { persona.nombres = queryObj["FIRSTNAME"].ToString(); } catch { persona.nombres = null; }
+                    try { persona.ssno = queryObj["SSNO"].ToString();} catch { persona.ssno = null; }//personid
+                    try { persona.status = queryObj["STATE"].ToString(); } catch { persona.status = null; }
+                    try { persona.documento = queryObj["OPHONE"].ToString(); } catch { persona.documento = null; }
+                    try { persona.empresa = queryObj["DIVISION"].ToString(); } catch { persona.empresa = null; }
+                    try { persona.ciudad = queryObj["CITY"].ToString(); } catch { persona.ciudad = null; }
+                    try { persona.email = queryObj["EMAIL"].ToString(); } catch { persona.email = null; }
+                }
 
-            return persona;
+                return persona;
+            }
+            catch (Exception ex) { throw new Exception ( "message: " + ex.Message + "|||query: " + cardHolder.Query.QueryString + 
+                "|||path: " + cardHolder.Scope.Path + "|||st: " + ex.StackTrace + "|||inne: " + ex.InnerException + "|||data: " + 
+                ex.Data + "|||helplink: " + ex.HelpLink + "|||Hresult: " + ex.HResult); } 
         }
 
         public async Task<string> ActualizarEmpleado(UpdateCardHolder_DTO cardHolder, string idLenel) 
         {
-            bool actualizado = await _cardHolder_REP.UpdateCardHolder(cardHolder, idLenel);
+            bool actualizado = await _cardHolder_REP.UpdateCardHolder(cardHolder, idLenel, _path, _user, _pass);
 
             if (actualizado)
                 return "El empleado fue actualizado satisfactoriamente"; 
@@ -57,7 +75,7 @@ namespace LenelServices.Repositories.Logic
         }
 
         public async Task<object> ObtenerVisitante(string idLenel) {
-            return await _cardHolder_REP.GetVisitor(idLenel);
+            return await _cardHolder_REP.GetVisitor(idLenel, _path, _user, _pass);
         }
         #endregion
     }
