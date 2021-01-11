@@ -4,6 +4,7 @@ using System.Management;
 using LenelServices.Repositories.DTO;
 using LenelServices.Repositories.Interfaces;
 using DataConduitManager.Repositories.Interfaces;
+using DataConduitManager.Repositories.DTO;
 using Microsoft.Extensions.Configuration;
 
 namespace LenelServices.Repositories.Logic
@@ -76,6 +77,15 @@ namespace LenelServices.Repositories.Logic
             {
                 throw new Exception(ex.Message);
             }
+        }
+
+        public async Task<bool> EnviarEventoGenerico(SendEvent_DTO evento) 
+        {
+            try 
+            {
+                return await _reader_REP.SendIncomingEvent(evento, _path, _user, _pass);
+            } 
+            catch (Exception ex){ throw new Exception("no se pudo crear el evento " + ex.Message); }
         }
         #endregion
     }

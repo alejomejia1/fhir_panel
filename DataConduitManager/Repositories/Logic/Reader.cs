@@ -4,10 +4,11 @@ using System.Text;
 using System.Management;
 using System.Threading.Tasks;
 using DataConduitManager.Repositories.Interfaces;
+using DataConduitManager.Repositories.DTO;
 
 namespace DataConduitManager.Repositories.Logic
 {
-    public class Reader:IReader
+    public class Reader : IReader
     {
         private readonly IDataConduITMgr _dataConduITMgr;
 
@@ -18,9 +19,9 @@ namespace DataConduitManager.Repositories.Logic
         }
         #endregion
 
-        #region METODOS
-        public async Task<ManagementObjectSearcher> GetReaderData(string panelID, string readerID, 
-            string path, string user, string pass) 
+        #region METODOS READER
+        public async Task<ManagementObjectSearcher> GetReaderData(string panelID, string readerID,
+            string path, string user, string pass)
         {
             ManagementScope readerScope = _dataConduITMgr.GetManagementScope(path, user, pass);
             if (readerScope == null) { throw new Exception("No fue posible establecer conexion con OnGuard"); }
@@ -33,7 +34,7 @@ namespace DataConduitManager.Repositories.Logic
             catch (Exception ex) { throw new Exception(ex.Message); }
         }
 
-        public async Task<int> ReaderGetMode (string panelID, string readerID, string path, string user, string pass)
+        public async Task<int> ReaderGetMode(string panelID, string readerID, string path, string user, string pass)
         {
             try
             {
@@ -63,13 +64,13 @@ namespace DataConduitManager.Repositories.Logic
             }
             catch (Exception ex)
             {
-                throw new Exception("No fue posible realizar el bloqueo " + ex.Message);
+                throw new Exception("el dispositivo no existe " + ex.Message);
             }
 
         }
 
-        public async Task<bool> ReaderSetMode(string panelID, string readerID, IReader.readerMode modeID, 
-            string path, string user, string pass) 
+        public async Task<bool> ReaderSetMode(string panelID, string readerID, IReader.readerMode modeID,
+            string path, string user, string pass)
         {
             try
             {
@@ -97,14 +98,14 @@ namespace DataConduitManager.Repositories.Logic
                 throw new Exception("No fue posible enviar el evento " + ex.Message);
             }
         }
-        
+
         public async Task<bool> OpenDoor(string panelID, string readerID, string path, string user, string pass) {
             try
             {
                 ManagementScope readerScope = _dataConduITMgr.GetManagementScope(path, user, pass);
 
                 ObjectQuery readerSearcher = new ObjectQuery("SELECT * FROM Lnl_Reader WHERE PanelID='" + panelID + "' " +
-                    "AND ReaderID='" + readerID +"'");
+                    "AND ReaderID='" + readerID + "'");
                 ManagementObjectSearcher getreader = new ManagementObjectSearcher(readerScope, readerSearcher);
 
                 foreach (ManagementObject queryObj in getreader.Get())
@@ -150,6 +151,48 @@ namespace DataConduitManager.Repositories.Logic
             catch (Exception ex)
             {
                 throw new Exception("No fue posible realizar el bloqueo " + ex.Message);
+            }
+        }
+        #endregion
+
+        #region LOGICAL DEVICES
+        public async Task<bool> SendIncomingEvent(SendEvent_DTO evento, string path, string user, string pass)
+        {
+            try
+            {
+                ManagementScope eventScope = _dataConduITMgr.GetManagementScope(path, user, pass);
+                ManagementClass eventClass = new ManagementClass(eventScope, new ManagementPath("Lnl_IncomingEvent"), null);
+                ManagementObject eventInstance = eventClass.CreateInstance();
+
+                ManagementBaseObject inParams = eventClass.GetMethodParameters("SendIncomingEvent");
+                
+                inParams.Properties["Source"].Value = evento.source;
+                
+                if (!string.IsNullOrEmpty(evento.device))
+                    inParams.Properties["Device"].Value = evento.device;
+                
+                if (!string.IsNullOrEmpty(evento.subdevice))
+                    inParams.Properties["SubDevice"].Value = evento.subdevice;
+
+                inParams.Properties["Description"].Value = evento.description;
+                
+                if (evento.isAccessGranted != null)
+                    inParams.Properties["IsAccessGrant"].Value = evento.isAccessGranted;
+                
+                if (evento.isAccessDeny != null)
+                    inParams.Properties["IsAccessDeny"].Value = evento.isAccessDeny;
+                
+                if (evento.badgeID != null)
+                    inParams.Properties["BadgeID"].Value = evento.badgeID;
+
+                // Execute the method
+                eventClass.InvokeMethod("SendIncomingEvent", inParams, null);
+                
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception( ex.Message );
             }
         }
         #endregion

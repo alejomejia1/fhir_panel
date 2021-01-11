@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Management;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using LenelServices.Repositories.DTO;
+using DataConduitManager.Repositories.DTO;
 
 namespace LenelServices.Repositories.Interfaces
 {
@@ -30,5 +27,12 @@ namespace LenelServices.Repositories.Interfaces
         /// <param name="readerPath"></param>
         /// <returns></returns>
         Task<object> BloquearPuerta(ReaderPath_DTO readerPath);
+
+        /// <summary>
+        /// Genera un evento generico por medio de DataConduIT
+        /// </summary>
+        /// <param name="evento"></param>
+        /// <returns></returns>
+        Task<bool> EnviarEventoGenerico(SendEvent_DTO evento);
     }
 }

@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LenelServices.Repositories.DTO;
 using LenelServices.Repositories.Interfaces;
+using DataConduitManager.Repositories.DTO;
 
 namespace LenelServices.Controllers
 {
@@ -16,13 +17,6 @@ namespace LenelServices.Controllers
         {
             _reader_REP_LOCAL = reader_REP_LOCAL;
         }
-
-        // GET: api/Reader
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
 
         //GET: api/Reader/5
         [HttpGet("/api/Reader/configLectora/{panelID}/{readerID}")]
@@ -51,6 +45,42 @@ namespace LenelServices.Controllers
             try
             {
                 return await _reader_REP_LOCAL.BloquearPuerta(pathReader);
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+        [HttpPost("/api/Reader/EnviarEvento")]
+        public async Task<object> EnviarEvento([FromBody] SendEvent_DTO evento)
+        {
+            try
+            {
+                return await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+        [HttpPost("/api/Reader/AutorizacionIngreso")]
+        public async Task<object> AutorizarIngreso([FromBody] SendEvent_DTO evento)
+        {
+            try
+            {
+                evento.description =  "Ingreso Biometrico|DispositivoIngreso:" + evento.subdevice + "|BadgeID:" + 
+                    evento.badgeID.ToString() + "|mascarilla:" + evento.tapabocas.ToString() + 
+                    "|temperatura:" + evento.temperatura.ToString();
+                return await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+        [HttpPost("/api/Reader/AutorizacionSalida")]
+        public async Task<object> AutorizarSalida([FromBody] SendEvent_DTO evento)
+        {
+            try
+            {
+                evento.description = "SalidaBiometrico|DispositivoSalida:" + evento.subdevice + "|BadgeID:" +
+                    evento.badgeID.ToString() + "|mascarilla:" + evento.tapabocas.ToString() +
+                    "|temperatura:" + evento.temperatura.ToString();
+                return await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Threading.Tasks;
+using System.Management;
 using DataConduitManager.Repositories.DTO;
 
 namespace DataConduitManager.Repositories.Interfaces
@@ -17,5 +15,15 @@ namespace DataConduitManager.Repositories.Interfaces
         /// <param name="pass"></param>
         /// <returns></returns>
         Task<object> AddBadge(AddBadge_DTO newBadge, string path, string user, string pass);
+
+        /// <summary>
+        /// Obtiene la informacion de un Badge en Lenel
+        /// </summary>
+        /// <param name="personId"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        Task<ManagementObjectSearcher> GetBadge(string personId, string path, string user, string pass);
     }
 }

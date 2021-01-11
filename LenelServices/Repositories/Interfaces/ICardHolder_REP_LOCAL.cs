@@ -7,18 +7,20 @@ namespace LenelServices.Repositories.Interfaces
     public interface ICardHolder_REP_LOCAL
     {
         /// <summary>
-        /// Crea un nuevo tarjetaHabiente por medio de DataConduIT
+        /// Crea un nuevo TarjetaHabiente en Lenel por medio de DataConduIT
         /// </summary>
-        /// <param name="newBadge"></param>
+        /// <param name="newCardHolder"></param>
+        /// <param name="idTipo">F=FUNCIONARIO -- V= VISITANTE</param>
         /// <returns></returns>
-        Task<object> CrearPersona(AddCardHolder_DTO newCardHolder);
+        Task<object> CrearPersona(AddCardHolder_DTO newCardHolder, string idTipo);
 
         /// <summary>
-        /// Obtiene un Empleado por medio de DataConduIT
+        /// Obtiene una persona de lenel por medio de DataConduIT
         /// </summary>
         /// <param name="idLenel"></param>
+        /// <param name="idTipo">F = FUNCIONARIO -- V = VISITANTE</param>
         /// <returns></returns>
-        Task<GetCardHolder_DTO> ObtenerEmpleado(string idLenel);
+        Task<GetCardHolder_DTO> ObtenerPersona(string idLenel, string idTipo);
 
         /// <summary>
         /// Obtiene un Visitante por medio de DataConduIT
@@ -33,6 +35,6 @@ namespace LenelServices.Repositories.Interfaces
         /// <param name="cardHolder"></param>
         /// <param name="idLenel"></param>
         /// <returns></returns>
-        Task<string> ActualizarEmpleado(UpdateCardHolder_DTO cardHolder, string idLenel);
+        Task<string> ActualizarPersona(UpdateCardHolder_DTO cardHolder, string idPersona);
     }
 }

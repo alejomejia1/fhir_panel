@@ -14,5 +14,6 @@ namespace DataConduitManager.Repositories.DTO
         public string empresa { get; set; }
         public string ciudad { get; set; }
         public string email { get; set; }
+        public bool visitante { get; set; }
     }
 }

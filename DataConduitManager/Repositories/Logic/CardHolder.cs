@@ -24,7 +24,7 @@ namespace DataConduitManager.Repositories.Logic
         public async Task<ManagementObjectSearcher> GetCardHolder(string idLenel, string path, string user, string password)
         {
             ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope(path,user,password);
-            ObjectQuery cardHolderSearcher = new ObjectQuery(@"SELECT * FROM Lnl_CardHolder WHERE ID = '" + idLenel + "'");
+            ObjectQuery cardHolderSearcher = new ObjectQuery(@"SELECT * FROM Lnl_CardHolder WHERE OPHONE = '" + idLenel + "'");
             ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
 
             try { return getCardHolder; }
@@ -54,12 +54,12 @@ namespace DataConduitManager.Repositories.Logic
 
         }
 
-        public async Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idLenel, string path, string user, string password)
+        public async Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idPersona, string path, string user, string password)
         {
             try
             {
                 ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope(path, user, password);
-                ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_CardHolder WHERE ID = " + idLenel);
+                ObjectQuery cardHolderSearcher = new ObjectQuery("SELECT * FROM Lnl_CardHolder WHERE OPHONE = " + idPersona);
                 ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
 
                 //redefine properties value  
@@ -89,15 +89,70 @@ namespace DataConduitManager.Repositories.Logic
         #endregion
 
         #region METODOS VISITOR
-        public async Task<object> GetVisitor(string idLenel, string path, string user, string password)
+        public async Task<ManagementObjectSearcher> GetVisitor(string idLenel, string path, string user, string password)
         {
             ManagementScope VisitorScope = _dataConduITMgr.GetManagementScope(path, user, password);
-            ObjectQuery  visitorSearcher = new ObjectQuery("SELECT * FROM Lnl_Visitor WHERE ID = " + idLenel);
+            ObjectQuery  visitorSearcher = new ObjectQuery("SELECT * FROM Lnl_Visitor WHERE OPHONE = " + idLenel);
             ManagementObjectSearcher getVisitor = new ManagementObjectSearcher(VisitorScope, visitorSearcher);
 
-            try { return getVisitor.Get(); }
+            try { return getVisitor; }
             catch(Exception ex) { throw new Exception(ex.Message); }
             
+        }
+
+        public async Task<object> AddVisitor(AddCardHolder_DTO newCardHolder, string path, string user, string password)
+        {
+            ManagementScope visitorScope = _dataConduITMgr.GetManagementScope(path, user, password);
+
+            ManagementClass visitorClass = new ManagementClass(visitorScope, new ManagementPath("Lnl_Visitor"), null);
+
+            ManagementObject newVisitorInstance = visitorClass.CreateInstance();
+
+            newVisitorInstance["FIRSTNAME"] = newCardHolder.firstName;
+            newVisitorInstance["LASTNAME"] = newCardHolder.lastName;
+            newVisitorInstance["CITY"] = newCardHolder.city;
+
+            PutOptions options = new PutOptions();
+            options.Type = PutType.CreateOnly;
+
+            //SE REALIZA COMMIT DE LA INSTANCIA
+            newVisitorInstance.Put(options);
+
+            return true;
+
+        }
+
+        public async Task<bool> UpdateVisitor(UpdateCardHolder_DTO cardHolder, string idPersona, string path, string user, string password)
+        {
+            try
+            {
+                ManagementScope visitorScope = _dataConduITMgr.GetManagementScope(path, user, password);
+                ObjectQuery visitorSearcher = new ObjectQuery("SELECT * FROM Lnl_Visitor WHERE OPHONE = " + idPersona);
+                ManagementObjectSearcher getVisitor = new ManagementObjectSearcher(visitorScope, visitorSearcher);
+
+                //redefine properties value  
+                foreach (ManagementObject queryObj in getVisitor.Get())
+                {
+                    queryObj["LASTNAME"] = cardHolder.apellidos;
+                    queryObj["FIRSTNAME"] = cardHolder.nombres;
+                    queryObj["SSNO"] = cardHolder.ssno;
+                    queryObj["STATE"] = cardHolder.status;
+                    queryObj["OPHONE"] = cardHolder.documento;
+                    queryObj["DIVISION"] = cardHolder.empresa;
+                    queryObj["CITY"] = cardHolder.ciudad;
+                    queryObj["EMAIL"] = cardHolder.email;
+
+                    PutOptions options = new PutOptions();
+                    options.Type = PutType.UpdateOnly;
+                    queryObj.Put(options);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
         #endregion
     }

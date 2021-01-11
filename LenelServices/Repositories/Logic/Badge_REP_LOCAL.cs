@@ -1,8 +1,13 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Management;
 using LenelServices.Repositories.Interfaces;
+using LenelServices.Repositories.DTO;
 using DataConduitManager.Repositories.DTO;
 using DataConduitManager.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
+using System.Globalization;
 
 namespace LenelServices.Repositories.Logic
 {
@@ -31,6 +36,56 @@ namespace LenelServices.Repositories.Logic
         public async Task<object> CrearBadge(AddBadge_DTO newBadge)
         {
             return await _badge_REP.AddBadge(newBadge, _path, _user, _pass);
+        }
+
+        public async Task<List<GetBadge_DTO>> ConsultarBadge(string personId) 
+        {
+            List<GetBadge_DTO> tarjetas = new List<GetBadge_DTO>();
+            ManagementObjectSearcher badge = await _badge_REP.GetBadge(personId, _path, _user, _pass);
+
+            try
+            {
+                foreach (ManagementObject queryObj in badge.Get())
+                {
+                    GetBadge_DTO item = new GetBadge_DTO();
+                    item.badgeID = queryObj["ID"].ToString();
+                    try
+                    {
+                        item.activacion = DateTime.ParseExact(queryObj["ACTIVATE"].ToString().Substring(0, 14),
+                            "yyyyMMddHHmmss", null);
+                    }
+                    catch
+                    {
+                        item.activacion = null;
+                    }
+                    try 
+                    { 
+                        item.desactivacion = DateTime.ParseExact(queryObj["DEACTIVATE"].ToString().Substring(0, 14), 
+                            "yyyyMMddHHmmss", null); 
+                    } 
+                    catch 
+                    { 
+                        item.desactivacion = null; 
+                    }
+                    try
+                    {
+                        item.estado = queryObj["STATUS"].ToString();
+                    }
+                    catch 
+                    { 
+                        item.desactivacion = null; 
+                    }
+
+                    tarjetas.Add(item);
+                }
+                return tarjetas;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("message: " + ex.Message + "|||query: " + badge.Query.QueryString +
+                "|||path: " + badge.Scope.Path + "|||st: " + ex.StackTrace + "|||inne: " + ex.InnerException + "|||data: " +
+                ex.Data + "|||helplink: " + ex.HelpLink + "|||Hresult: " + ex.HResult);
+            }
         }
         #endregion
     }

@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using System.Management;
+using DataConduitManager.Repositories.DTO;
+
 
 namespace DataConduitManager.Repositories.Interfaces
 {
@@ -77,5 +76,15 @@ namespace DataConduitManager.Repositories.Interfaces
         /// <param name="pass"></param>
         /// <returns></returns>
         Task<object> BlockDoor(string panelID, string readerID, string path, string user, string pass);
+
+        /// <summary>
+        /// Crea un evento generico asociado a una fuente logica de dataconduIT
+        /// </summary>
+        /// <param name="evento"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        Task<bool> SendIncomingEvent(SendEvent_DTO evento, string path, string user, string pass);
     }
 }

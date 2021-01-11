@@ -64,8 +64,6 @@ namespace DataConduitManager.Repositories.Logic
                 {
                     //Console.Write("ID:" + proceso["ID"].ToString() + " - " + "Description:" + proceso["Description"].ToString() + "\n\r");
                     strSalida = strSalida + "ID:" + proceso["ID"].ToString() + " - " + "Description:" + proceso["Description"].ToString() + " - " + "TextInstructionName:" + proceso["TextInstructionName"].ToString() + Environment.NewLine;
-
-
                 }
 
                 return strSalida;

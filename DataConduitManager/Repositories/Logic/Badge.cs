@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Management;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text;
 using DataConduitManager.Repositories.Interfaces;
 using DataConduitManager.Repositories.DTO;
 
@@ -58,7 +56,24 @@ namespace DataConduitManager.Repositories.Logic
             {
                 throw new Exception(ex.Message);
             }
-        }    
+        }
+
+        public async Task<ManagementObjectSearcher> GetBadge(string personId, string path, string user, string pass)
+        {
+            try
+            {
+                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope(path, user, pass);
+                ObjectQuery badgeSearcher = new ObjectQuery(@"SELECT * FROM Lnl_Badge WHERE PERSONID = '" + personId + "'");
+                ManagementObjectSearcher getBadge = new ManagementObjectSearcher(badgeScope, badgeSearcher);
+
+                try { return getBadge; }
+                catch (Exception ex) { throw new Exception("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         #endregion
 
     }

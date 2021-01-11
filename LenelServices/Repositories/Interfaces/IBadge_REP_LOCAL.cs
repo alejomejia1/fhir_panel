@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DataConduitManager.Repositories.DTO;
+using LenelServices.Repositories.DTO;
 
 namespace LenelServices.Repositories.Interfaces
 {
@@ -14,5 +15,12 @@ namespace LenelServices.Repositories.Interfaces
         /// <param name="newBadge"></param>
         /// <returns></returns>
         Task<object> CrearBadge(AddBadge_DTO newBadge);
+
+        /// <summary>
+        /// Obtiene la informacion relacionada a un badge por medio de DataConduIT
+        /// </summary>
+        /// <param name="personId"></param>
+        /// <returns></returns>
+        Task<List<GetBadge_DTO>> ConsultarBadge(string personId);
     }
 }
