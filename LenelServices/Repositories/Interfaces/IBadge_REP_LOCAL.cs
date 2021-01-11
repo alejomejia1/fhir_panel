@@ -22,5 +22,12 @@ namespace LenelServices.Repositories.Interfaces
         /// <param name="personId"></param>
         /// <returns></returns>
         Task<List<GetBadge_DTO>> ConsultarBadge(string personId);
+
+        /// <summary>
+        /// Obtiene la informacion relacionada a un badge por medio de DataConduIT
+        /// </summary>
+        /// <param name="badgeId"></param>
+        /// <returns></returns>
+        Task<string> ConsultarPersonaBadge(string badgeId);
     }
 }

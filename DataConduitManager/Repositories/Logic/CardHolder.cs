@@ -32,6 +32,17 @@ namespace DataConduitManager.Repositories.Logic
 
         }
 
+        public async Task<ManagementObjectSearcher> GetCardHolderByID(string idPersona, string path, string user, string password)
+        {
+            ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope(path, user, password);
+            ObjectQuery cardHolderSearcher = new ObjectQuery(@"SELECT * FROM Lnl_CardHolder WHERE ID = '" + idPersona + "'");
+            ManagementObjectSearcher getCardHolder = new ManagementObjectSearcher(cardHolderScope, cardHolderSearcher);
+
+            try { return getCardHolder; }
+            catch (Exception ex) { throw new Exception("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); }
+
+        }
+
         public async Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder, string path, string user, string password)
         {
             ManagementScope cardHolderScope = _dataConduITMgr.GetManagementScope(path,user,password);
@@ -43,6 +54,12 @@ namespace DataConduitManager.Repositories.Logic
             newCardHolderInstance["FIRSTNAME"] = newCardHolder.firstName;
             newCardHolderInstance["LASTNAME"] = newCardHolder.lastName;
             newCardHolderInstance["CITY"] = newCardHolder.city;
+            newCardHolderInstance["OPHONE"] = newCardHolder.idpersona;
+            newCardHolderInstance["SSNO"] = newCardHolder.ssno;
+            //newCardHolderInstance["LOCATION"] = newCardHolder.instalacion;
+            //newCardHolderInstance["DIVISION"] = newCardHolder.empresa;
+            newCardHolderInstance["EMAIL"] = newCardHolder.email;
+
 
             PutOptions options = new PutOptions();
             options.Type = PutType.CreateOnly;
@@ -111,6 +128,8 @@ namespace DataConduitManager.Repositories.Logic
             newVisitorInstance["FIRSTNAME"] = newCardHolder.firstName;
             newVisitorInstance["LASTNAME"] = newCardHolder.lastName;
             newVisitorInstance["CITY"] = newCardHolder.city;
+            newVisitorInstance["OPHONE"] = newCardHolder.idpersona;
+            newVisitorInstance["SSNO"] = newCardHolder.ssno;
 
             PutOptions options = new PutOptions();
             options.Type = PutType.CreateOnly;

@@ -87,6 +87,44 @@ namespace LenelServices.Repositories.Logic
                 ex.Data + "|||helplink: " + ex.HelpLink + "|||Hresult: " + ex.HResult); } 
         }
 
+        public async Task<GetCardHolder_DTO> ObtenerPersona(string idBadge)
+        {
+            GetCardHolder_DTO persona = new GetCardHolder_DTO();
+            ManagementObjectSearcher cardHolder = new ManagementObjectSearcher();
+
+            string idPersona = await _badge_REP_LOCAL.ConsultarPersonaBadge(idBadge);
+
+            if (idPersona == "NA")
+                throw new Exception("No hay una persona relacionada a este codigo de tarjeta");
+            
+            cardHolder = await _cardHolder_REP.GetCardHolderByID(idPersona, _path, _user, _pass);
+
+            try
+            {
+                foreach (ManagementObject queryObj in cardHolder.Get())
+                {
+                    try { persona.apellidos = queryObj["LASTNAME"].ToString(); } catch { persona.apellidos = null; }
+                    try { persona.nombres = queryObj["FIRSTNAME"].ToString(); } catch { persona.nombres = null; }
+                    try { persona.ssno = queryObj["SSNO"].ToString(); } catch { persona.ssno = null; }
+                    try { persona.status = queryObj["STATE"].ToString(); } catch { persona.status = null; }
+                    try { persona.documento = queryObj["OPHONE"].ToString(); } catch { persona.documento = null; }
+                    try { persona.empresa = queryObj["DIVISION"].ToString(); } catch { persona.empresa = null; }
+                    try { persona.ciudad = queryObj["CITY"].ToString(); } catch { persona.ciudad = null; }
+                    try { persona.email = queryObj["EMAIL"].ToString(); } catch { persona.email = null; }
+                    List<GetBadge_DTO> badges = await _badge_REP_LOCAL.ConsultarBadge(queryObj["ID"].ToString());
+                    persona.Badges = badges;
+                }
+
+                return persona;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("message: " + ex.Message + "|||query: " + cardHolder.Query.QueryString +
+                "|||path: " + cardHolder.Scope.Path + "|||st: " + ex.StackTrace + "|||inne: " + ex.InnerException + "|||data: " +
+                ex.Data + "|||helplink: " + ex.HelpLink + "|||Hresult: " + ex.HResult);
+            }
+        }
+
         public async Task<string> ActualizarPersona(UpdateCardHolder_DTO cardHolder, string idPersona) 
         {
             bool actualizado = false;

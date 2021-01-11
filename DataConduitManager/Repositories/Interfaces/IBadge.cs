@@ -25,5 +25,15 @@ namespace DataConduitManager.Repositories.Interfaces
         /// <param name="pass"></param>
         /// <returns></returns>
         Task<ManagementObjectSearcher> GetBadge(string personId, string path, string user, string pass);
+
+        /// <summary>
+        /// Obtiene la informacion de una tarjeta dado su id
+        /// </summary>
+        /// <param name="badgeId"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        Task<ManagementObjectSearcher> GetPersonBadge(string badgeId, string path, string user, string pass);
     }
 }

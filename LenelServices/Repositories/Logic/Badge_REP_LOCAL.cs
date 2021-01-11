@@ -87,6 +87,26 @@ namespace LenelServices.Repositories.Logic
                 ex.Data + "|||helplink: " + ex.HelpLink + "|||Hresult: " + ex.HResult);
             }
         }
+
+        public async Task<string> ConsultarPersonaBadge(string badgeId)
+        {
+            ManagementObjectSearcher badge = await _badge_REP.GetPersonBadge(badgeId, _path, _user, _pass);
+
+            try
+            {
+                foreach (ManagementObject queryObj in badge.Get())
+                {
+                    return queryObj["PERSONID"].ToString();
+                }
+                return "NA";
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("message: " + ex.Message + "|||query: " + badge.Query.QueryString +
+                "|||path: " + badge.Scope.Path + "|||st: " + ex.StackTrace + "|||inne: " + ex.InnerException + "|||data: " +
+                ex.Data + "|||helplink: " + ex.HelpLink + "|||Hresult: " + ex.HResult);
+            }
+        }
         #endregion
     }
 }

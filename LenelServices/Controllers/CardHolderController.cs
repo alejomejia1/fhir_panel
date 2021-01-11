@@ -39,15 +39,35 @@ namespace LenelServices.Controllers
         }
 
         /// <summary>
+        /// Obtiene una persona visitante o cardHolder
+        /// </summary>
+        /// <param name="idBadge"></param>
+        /// <returns></returns>
+        [HttpGet("/api/CardHolder/ObtenerPersona/{idBadge}")]
+        public async Task<object> ObtenerPersona(string idBadge)
+        {
+            try
+            {
+                return await _cardHolder_REP_LOCAL.ObtenerPersona(idBadge);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException);
+            }
+        }
+
+        /// <summary>
         /// Crea un Funcionario o visitante en Lenel
         /// </summary>
-        /// <param name="newCardHolde"></param>
+        /// <param name="newCardHolder"></param>
         /// <param name="idTipo">F = FUNCIONARIO -- V = VISITANTE</param>
         /// <returns></returns>
         [HttpPost("/api/CardHolder/CrearPersona/{idTipo}")]
         public async Task<object> CrearPersona([FromBody] AddCardHolder_DTO newCardHolder, string idTipo)
         {
-            return await _cardHolder_REP_LOCAL.CrearPersona(newCardHolder, idTipo);
+            try { return await _cardHolder_REP_LOCAL.CrearPersona(newCardHolder, idTipo); } 
+            catch(Exception ex) 
+            { return BadRequest("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); }
         }
 
         /// <summary>
