@@ -15,5 +15,6 @@ namespace DataConduitManager.Repositories.DTO
         public int? badgeID { get; set; }
         public bool? tapabocas { get; set; }
         public float? temperatura { get; set; }
+        public float? tempRef { get; set; }
     }
 }

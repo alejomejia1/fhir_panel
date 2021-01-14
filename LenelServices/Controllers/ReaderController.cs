@@ -65,8 +65,8 @@ namespace LenelServices.Controllers
             try
             {
                 evento.description =  "Ingreso Biometrico|DispositivoIngreso:" + evento.subdevice + "|BadgeID:" + 
-                    evento.badgeID.ToString() + "|mascarilla:" + evento.tapabocas.ToString() + 
-                    "|temperatura:" + evento.temperatura.ToString();
+                    evento.badgeID.ToString() + "|tapabocas:" + evento.tapabocas.ToString() +
+                    "|temperatura:" + evento.temperatura.ToString() + "|temperatura referencia:" + evento.tempRef.ToString();
                 return await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
@@ -78,8 +78,8 @@ namespace LenelServices.Controllers
             try
             {
                 evento.description = "SalidaBiometrico|DispositivoSalida:" + evento.subdevice + "|BadgeID:" +
-                    evento.badgeID.ToString() + "|mascarilla:" + evento.tapabocas.ToString() +
-                    "|temperatura:" + evento.temperatura.ToString();
+                    evento.badgeID.ToString() + "|tapabocas:" + evento.tapabocas.ToString() +
+                    "|temperatura:" + evento.temperatura.ToString() + "|temperatura referencia:" + evento.tempRef.ToString();
                 return await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
