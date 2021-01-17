@@ -107,6 +107,17 @@ namespace LenelServices.Repositories.Logic
                 ex.Data + "|||helplink: " + ex.HelpLink + "|||Hresult: " + ex.HResult);
             }
         }
+
+        public async Task<bool> ActualizarEstadoBadge(string badgeId, SetBadgeStatus_DTO nuevoEstado) 
+        {
+            badgeStatus status = (badgeStatus)Enum.Parse(typeof(badgeStatus), nuevoEstado.estadoBadge.ToString());
+
+            if (nuevoEstado.fechaDesactivacion == null)
+                nuevoEstado.fechaDesactivacion = DateTime.Now;
+
+            return await _badge_REP.UpdateStatusBadge(badgeId, status, (DateTime)nuevoEstado.fechaDesactivacion,
+                _path, _user, _pass);
+        }
         #endregion
     }
 }

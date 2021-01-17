@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Management;
+using System.Globalization;
 using System.Threading.Tasks;
 using DataConduitManager.Repositories.Interfaces;
 using DataConduitManager.Repositories.DTO;
@@ -91,7 +92,37 @@ namespace DataConduitManager.Repositories.Logic
                 throw new Exception(ex.Message);
             }
         }
-        #endregion
 
+        public async Task<bool> UpdateStatusBadge(string badgeId, badgeStatus status, DateTime deactivationDate, string path, string user, string pass) 
+        {
+            try
+            {
+                CultureInfo provider = CultureInfo.InvariantCulture;
+
+                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope(path, user, pass);
+                ObjectQuery badgeSearcher = new ObjectQuery("SELECT * FROM Lnl_Badge WHERE ID = " + badgeId);
+                ManagementObjectSearcher getBadge = new ManagementObjectSearcher(badgeScope, badgeSearcher);
+
+                //redefine properties value  
+                foreach (ManagementObject queryObj in getBadge.Get())
+                {
+                    queryObj["STATUS"] = (int)status;
+                    string fechaDesactivacion = deactivationDate.ToString("yyyyMMdd") + "000000.000000-300";
+                    if (status == badgeStatus.INACTIVA || status == badgeStatus.ACTIVO)
+                        queryObj["DEACTIVATE"] = fechaDesactivacion;
+
+                    PutOptions options = new PutOptions();
+                    options.Type = PutType.UpdateOnly;
+                    queryObj.Put(options);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
     }
 }

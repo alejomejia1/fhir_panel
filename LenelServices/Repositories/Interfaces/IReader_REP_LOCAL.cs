@@ -29,6 +29,14 @@ namespace LenelServices.Repositories.Interfaces
         Task<object> BloquearPuerta(ReaderPath_DTO readerPath);
 
         /// <summary>
+        /// Establece la lectora en el modo elegido por medio de DataConduIT
+        /// </summary>
+        /// <param name="readerPath"></param>
+        /// <param name="estado"></param>
+        /// <returns></returns>
+        Task<object> CambioEstadoPuerta(ReaderPath_DTO readerPath, int estado);
+
+        /// <summary>
         /// Genera un evento generico por medio de DataConduIT
         /// </summary>
         /// <param name="evento"></param>

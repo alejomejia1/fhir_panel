@@ -29,5 +29,13 @@ namespace LenelServices.Repositories.Interfaces
         /// <param name="badgeId"></param>
         /// <returns></returns>
         Task<string> ConsultarPersonaBadge(string badgeId);
+
+        /// <summary>
+        /// Cambia el estado de una tarjeta
+        /// </summary>
+        /// <param name="badgeId"></param>
+        /// <param name="nuevoEstado"></param>
+        /// <returns></returns>
+        Task<bool> ActualizarEstadoBadge(string badgeId, SetBadgeStatus_DTO nuevoEstado);
     }
 }

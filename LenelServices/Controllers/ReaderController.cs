@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using LenelServices.Repositories.DTO;
@@ -49,6 +50,31 @@ namespace LenelServices.Controllers
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
 
+        /// <summary>
+        /// Cambio de modo de acceso de una lectora
+        ///    LOCKED = 0,
+        ///    CARDONLY = 1,
+        ///    PIN_OR_CARD = 2,
+        ///    PIN_AND_CARD = 3, 
+        ///    UNLOCKED = 4,
+        ///    FACCODE_ONLY = 5,
+        ///    CYPHERLOCK = 6,
+        ///    AUTOMATIC = 7,
+        ///    DEFAULT = 100
+        /// </summary>
+        /// <param name="pathReader"></param>
+        /// <param name="estadoId"></param>
+        /// <returns></returns>
+        [HttpPut("/api/Reader/CambiarModoLectora/{estadoId}")]
+        public async Task<object> CambiarEstadoPuerta([FromBody] ReaderPath_DTO pathReader, int estadoId)
+        {
+            try
+            {
+                return await _reader_REP_LOCAL.CambioEstadoPuerta(pathReader, estadoId);
+            }
+            catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
         [HttpPost("/api/Reader/EnviarEvento")]
         public async Task<object> EnviarEvento([FromBody] SendEvent_DTO evento)
         {
@@ -64,10 +90,15 @@ namespace LenelServices.Controllers
         {
             try
             {
-                evento.description =  "Ingreso Biometrico|DispositivoIngreso:" + evento.subdevice + "|BadgeID:" + 
-                    evento.badgeID.ToString() + "|tapabocas:" + evento.tapabocas.ToString() +
-                    "|temperatura:" + evento.temperatura.ToString() + "|temperatura referencia:" + evento.tempRef.ToString();
-                return await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
+                EvaluacionEvento_DTO eval = GetDescripcion(true, evento);
+
+                evento.description = eval.descripcionEvento;
+                bool enviado = await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
+
+                if (enviado)
+                    return eval;
+                else
+                    throw new Exception("No se pudo enviar el evento");
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
         }
@@ -77,12 +108,43 @@ namespace LenelServices.Controllers
         {
             try
             {
-                evento.description = "SalidaBiometrico|DispositivoSalida:" + evento.subdevice + "|BadgeID:" +
-                    evento.badgeID.ToString() + "|tapabocas:" + evento.tapabocas.ToString() +
-                    "|temperatura:" + evento.temperatura.ToString() + "|temperatura referencia:" + evento.tempRef.ToString();
-                return await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
+                EvaluacionEvento_DTO eval = GetDescripcion(false, evento);
+
+                evento.description = eval.descripcionEvento;
+                bool enviado = await _reader_REP_LOCAL.EnviarEventoGenerico(evento);
+
+                if (enviado)
+                    return eval;
+                else
+                    throw new Exception("No se pudo enviar el evento");
+
             }
             catch (Exception ex) { return BadRequest(ex.Message); }
+        }
+
+        /// <summary>
+        /// Devuelve resultado del analisis de temperatura y tapabocas
+        /// </summary>
+        /// <param name="entrada"></param>
+        /// <param name="evento"></param>
+        /// <returns></returns>
+        private EvaluacionEvento_DTO GetDescripcion(bool entrada, SendEvent_DTO evento)
+        {
+
+            List<string> descripcion = new List<string>
+            {
+                entrada ? "IB" : "SB", //NOMBRE DEL EVENTO
+                (bool)evento.tapabocas ? "0" : "1", //ALERTA DE TAPABOCAS
+                (evento.temperatura <= evento.tempRef) ? "0" : "1", //ALERTA DE TEMPERATURA
+            };
+
+            return new EvaluacionEvento_DTO
+            {
+                descripcionEvento = descripcion[0] + "|" + descripcion[1] + "|" + descripcion[2] +
+                    "|" + evento.badgeID.ToString() + "|" + evento.temperatura.ToString() +
+                    "|" + evento.tempRef.ToString(),
+                alarmaEvento = (descripcion[1] == "1" || descripcion[2] == "1")
+            };
         }
     }
 }

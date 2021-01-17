@@ -58,7 +58,7 @@ namespace LenelServices.Repositories.Logic
         public async Task<bool> AbrirPuerta(ReaderPath_DTO readerPath) 
         {
             try{
-                return await _reader_REP.ReaderSetMode(readerPath.panelID, readerPath.readerID, IReader.readerMode.UNLOCKED,
+                return await _reader_REP.ReaderSetMode(readerPath.panelID, readerPath.readerID, IReader.readerMode.CARDONLY,
                      _path, _user, _pass);
             }
             catch (Exception ex){
@@ -71,6 +71,21 @@ namespace LenelServices.Repositories.Logic
             try
             {
                 return await _reader_REP.ReaderSetMode(readerPath.panelID, readerPath.readerID, IReader.readerMode.LOCKED,
+                     _path, _user, _pass);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<object> CambioEstadoPuerta(ReaderPath_DTO readerPath, int estado) 
+        {
+            IReader.readerMode readerMode = (IReader.readerMode)Enum.Parse(typeof(IReader.readerMode), estado.ToString());
+
+            try
+            {
+                return await _reader_REP.ReaderSetMode(readerPath.panelID, readerPath.readerID, readerMode,
                      _path, _user, _pass);
             }
             catch (Exception ex)
