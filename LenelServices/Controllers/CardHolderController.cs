@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DataConduitManager.Repositories.DTO;
 using LenelServices.Repositories.Interfaces;
-using LenelServices.Repositories.Logic;
 
 namespace LenelServices.Controllers
 {
@@ -16,51 +12,75 @@ namespace LenelServices.Controllers
     {
         private readonly ICardHolder_REP_LOCAL _cardHolder_REP_LOCAL;
 
+        #region CONSTRUCTOR
         public CardHolderController(ICardHolder_REP_LOCAL cardHolder_REP_LOCAL)
         {
             _cardHolder_REP_LOCAL = cardHolder_REP_LOCAL;
         }
+        #endregion
 
-        //// GET: api/CardHolder
-        //[HttpGet]
-        //public IEnumerable<string> Get()
-        //{
-        //    return new string[] { "value1", "value2" };
-        //}
-
-        // GET: api/CardHolder/5
-        [HttpGet("/api/CardHolder/ObtenerEmpleado/{idLenel}")]
-        public async Task<object> ObtenerEmpleado(string idLenel)
+        /// <summary>
+        /// Obtiene una persona visitante o cardHolder
+        /// </summary>
+        /// <param name="idTipo">F = FUNCIONARIO -- V = VISITANTE</param>
+        /// <param name="idPersona">Numero de identificacion</param>
+        /// <returns></returns>
+        [HttpGet("/api/CardHolder/ObtenerPersona/{idTipo}/{idPersona}")]
+        public async Task<object> ObtenerPersona(string idTipo, string idPersona)
         {
-            try { return await _cardHolder_REP_LOCAL.ObtenerEmpleado(idLenel); }
+            try 
+            {
+                return await _cardHolder_REP_LOCAL.ObtenerPersona(idPersona, idTipo);
+            }
+            catch (Exception ex) 
+            {
+                return BadRequest("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); 
+            }
+        }
+
+        /// <summary>
+        /// Obtiene una persona visitante o cardHolder
+        /// </summary>
+        /// <param name="idBadge"></param>
+        /// <returns></returns>
+        [HttpGet("/api/CardHolder/ObtenerPersona/{idBadge}")]
+        public async Task<object> ObtenerPersona(string idBadge)
+        {
+            try
+            {
+                return await _cardHolder_REP_LOCAL.ObtenerPersona(idBadge);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException);
+            }
+        }
+
+        /// <summary>
+        /// Crea un Funcionario o visitante en Lenel
+        /// </summary>
+        /// <param name="newCardHolder"></param>
+        /// <param name="idTipo">F = FUNCIONARIO -- V = VISITANTE</param>
+        /// <returns></returns>
+        [HttpPost("/api/CardHolder/CrearPersona/{idTipo}")]
+        public async Task<object> CrearPersona([FromBody] AddCardHolder_DTO newCardHolder, string idTipo)
+        {
+            try { return await _cardHolder_REP_LOCAL.CrearPersona(newCardHolder, idTipo); } 
+            catch(Exception ex) 
+            { return BadRequest("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); }
+        }
+
+        /// <summary>
+        /// Actualiza una persona en Lenel
+        /// </summary>
+        /// <param name="idPersona"></param>
+        /// <param name="cardHolder"></param>
+        /// <returns></returns>
+        [HttpPut("/api/CardHolder/ActualizarPersona/{idPersona}")]
+        public async Task<object> ActualizarPersona(string idPersona, [FromBody] UpdateCardHolder_DTO cardHolder)
+        {
+            try { return await _cardHolder_REP_LOCAL.ActualizarPersona(cardHolder, idPersona); }
             catch (Exception ex) { return BadRequest(ex.Message); }
-        }
-
-        [HttpGet("/api/CardHolder/ObtenerVisitante/{idLenel}")]
-        public async Task<object> ObtenerVisitante(string idLenel)
-        {
-            return await _cardHolder_REP_LOCAL.ObtenerVisitante(idLenel);
-        }
-
-        // POST: api/CardHolder
-        [HttpPost("/api/CardHolder/CrearPersona")]
-        public async Task<object> CrearPersona([FromBody] AddCardHolder_DTO newCardHolder)
-        {
-            return await _cardHolder_REP_LOCAL.CrearPersona(newCardHolder);
-        }
-
-        // PUT: api/CardHolder/5
-        [HttpPut("/api/CardHolder/ActualizarEmpleado/{idLenel}")]
-        public async Task<object> ActualizarEmpleado(string idLenel, [FromBody] UpdateCardHolder_DTO cardHolder)
-        {
-            try { return await _cardHolder_REP_LOCAL.ActualizarEmpleado(cardHolder, idLenel); }
-            catch (Exception ex) { return BadRequest(ex.Message); }
-        }
-
-        // DELETE: api/ApiWithActions/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

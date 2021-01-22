@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Management;
+using System.Globalization;
 using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Text;
 using DataConduitManager.Repositories.Interfaces;
 using DataConduitManager.Repositories.DTO;
 
@@ -12,19 +11,19 @@ namespace DataConduitManager.Repositories.Logic
     {
         private readonly IDataConduITMgr _dataConduITMgr;
 
-        #region Constructor
+        #region CONSTRUCTOR
         public Badge(IDataConduITMgr dataConduITMgr)
         {
             _dataConduITMgr = dataConduITMgr;
         }
         #endregion
 
-        #region Métodos
-        public async Task<object> AddBadge(AddBadge_DTO newBadge)
+        #region METODOS
+        public async Task<object> AddBadge(AddBadge_DTO newBadge, string path, string user, string pass)
         {
             try
             {
-                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope();
+                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope(path, user, pass);
 
                 ManagementClass badgeClass = new ManagementClass(badgeScope, new ManagementPath("Lnl_Badge"), null);
 
@@ -58,8 +57,72 @@ namespace DataConduitManager.Repositories.Logic
             {
                 throw new Exception(ex.Message);
             }
-        }    
-        #endregion
+        }
 
+        public async Task<ManagementObjectSearcher> GetBadge(string personId, string path, string user, string pass)
+        {
+            try
+            {
+                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope(path, user, pass);
+                ObjectQuery badgeSearcher = new ObjectQuery(@"SELECT * FROM Lnl_Badge WHERE PERSONID = '" + personId + "'");
+                ManagementObjectSearcher getBadge = new ManagementObjectSearcher(badgeScope, badgeSearcher);
+
+                try { return getBadge; }
+                catch (Exception ex) { throw new Exception("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<ManagementObjectSearcher> GetPersonBadge(string badgeId, string path, string user, string pass)
+        {
+            try
+            {
+                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope(path, user, pass);
+                ObjectQuery badgeSearcher = new ObjectQuery(@"SELECT * FROM Lnl_Badge WHERE ID = '" + badgeId + "'");
+                ManagementObjectSearcher getBadge = new ManagementObjectSearcher(badgeScope, badgeSearcher);
+
+                try { return getBadge; }
+                catch (Exception ex) { throw new Exception("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException); }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> UpdateStatusBadge(string badgeId, badgeStatus status, DateTime deactivationDate, string path, string user, string pass) 
+        {
+            try
+            {
+                CultureInfo provider = CultureInfo.InvariantCulture;
+
+                ManagementScope badgeScope = _dataConduITMgr.GetManagementScope(path, user, pass);
+                ObjectQuery badgeSearcher = new ObjectQuery("SELECT * FROM Lnl_Badge WHERE ID = " + badgeId);
+                ManagementObjectSearcher getBadge = new ManagementObjectSearcher(badgeScope, badgeSearcher);
+
+                //redefine properties value  
+                foreach (ManagementObject queryObj in getBadge.Get())
+                {
+                    queryObj["STATUS"] = (int)status;
+                    string fechaDesactivacion = deactivationDate.ToString("yyyyMMdd") + "000000.000000-300";
+                    if (status == badgeStatus.INACTIVA || status == badgeStatus.ACTIVO)
+                        queryObj["DEACTIVATE"] = fechaDesactivacion;
+
+                    PutOptions options = new PutOptions();
+                    options.Type = PutType.UpdateOnly;
+                    queryObj.Put(options);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+        #endregion
     }
 }

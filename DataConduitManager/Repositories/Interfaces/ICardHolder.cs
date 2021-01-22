@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Management;
+﻿using System.Management;
 using System.Threading.Tasks;
 using DataConduitManager.Repositories.DTO;
 
@@ -10,31 +7,75 @@ namespace DataConduitManager.Repositories.Interfaces
     public interface ICardHolder
     {
         /// <summary>
-        /// CREA UN EMPLEADO NUEVA EN LENEL
+        /// Crea un nuevo CardHolder en Lenel
         /// </summary>
+        /// <param name="newCardHolder"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder);
+        Task<object> AddCardHolder(AddCardHolder_DTO newCardHolder, string path, string user, string pass);
 
         /// <summary>
-        /// ACTUALIZA UN EMPLEADO EN LENEL
+        /// Actualiza un CardHolder en Lenel
         /// </summary>
         /// <param name="cardHolder"></param>
-        /// <param name="idLenel"></param>
+        /// <param name="idPersona"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
         /// <returns></returns>
-        Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idLenel);
+        Task<bool> UpdateCardHolder(UpdateCardHolder_DTO cardHolder, string idPersona, string path, string user, string pass);
 
         /// <summary>
-        /// Obtiene un empleado Tarjeta Habiente en LENEL
+        /// Obtiene un CardHolder en Lenel
         /// </summary>
         /// <param name="idLenel"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
         /// <returns></returns>
-        Task<ManagementObjectSearcher> GetCardHolder(string idLenel);
+        Task<ManagementObjectSearcher> GetCardHolder(string idLenel, string path, string user, string password);
 
         /// <summary>
-        /// Obtiene un visitante en Lenel
+        /// Obtiene un CardHolder en Lenel 
         /// </summary>
-        /// <param name="idLenel"></param>
+        /// <param name="idPersona"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
         /// <returns></returns>
-        Task<object> GetVisitor(string idLenel);
+        Task<ManagementObjectSearcher> GetCardHolderByID(string idPersona, string path, string user, string password);
+
+        /// <summary>
+        /// Obtiene un Visitor en Lenel
+        /// </summary>
+        /// <param name="idPersona"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        Task<ManagementObjectSearcher> GetVisitor(string idPersona, string path, string user, string pass);
+
+        /// <summary>
+        /// Crea un nuevo Visitor en Lenel
+        /// </summary>
+        /// <param name="newCardHolder"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="pass"></param>
+        /// <returns></returns>
+        Task<object> AddVisitor(AddCardHolder_DTO newCardHolder, string path, string user, string pass);
+
+        /// <summary>
+        /// Actualiza un Visitor en Lenel
+        /// </summary>
+        /// <param name="cardHolder"></param>
+        /// <param name="idPersona"></param>
+        /// <param name="path"></param>
+        /// <param name="user"></param>
+        /// <param name="password"></param>
+        /// <returns></returns>
+        Task<bool> UpdateVisitor(UpdateCardHolder_DTO cardHolder, string idPersona, string path, string user, string password);
     }
 }

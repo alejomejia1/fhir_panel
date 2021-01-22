@@ -36,6 +36,8 @@ namespace LenelServices
             services.AddTransient<ICardHolder, CardHolder>();
             services.AddTransient<IBadge_REP_LOCAL, Badge_REP_LOCAL>();
             services.AddTransient<ICardHolder_REP_LOCAL, CardHolder_REP_LOCAL>();
+            services.AddTransient<IReader, Reader>();
+            services.AddTransient<IReader_REP_LOCAL, Reader_REP_LOCAL>();
             // Habilitar CORS
             services.AddCors(options => options.AddPolicy("CorsPolicy", builder =>
             {

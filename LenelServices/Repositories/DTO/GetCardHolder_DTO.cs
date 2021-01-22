@@ -15,5 +15,6 @@ namespace LenelServices.Repositories.DTO
         public string empresa { get; set; }
         public string ciudad { get; set; }
         public string email { get; set; }
+        public List<GetBadge_DTO> Badges { get; set; }
     }
 }

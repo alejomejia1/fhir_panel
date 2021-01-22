@@ -24,5 +24,14 @@ namespace AspStudio.Models
 
         [Column("nombre")]
         public string Nombre { get; set; }
+
+        [Column("Rol")]
+        public byte Rol { get; set; }
+
+        [Column("FechaInicial")]
+        public DateTime FechaInicial { get; set; }
+
+        [Column("FechaFinal")]
+        public DateTime FechaFinal { get; set; }
     }
 }

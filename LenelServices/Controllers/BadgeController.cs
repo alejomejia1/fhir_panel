@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using DataConduitManager.Repositories.DTO;
 using LenelServices.Repositories.Interfaces;
+using LenelServices.Repositories.DTO;
 
 namespace LenelServices.Controllers
 {
@@ -42,9 +43,17 @@ namespace LenelServices.Controllers
         }
 
         // PUT: api/Badge/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value)
+        [HttpPut("/api/Badge/CambiarEstadoBadge/{idStatus}")]
+        public async Task<object> CambiarEstadoBadge(string idStatus, [FromBody] SetBadgeStatus_DTO nuevoStatus)
         {
+            try
+            {
+                return await _badge_REP_LOCAL.ActualizarEstadoBadge(idStatus, nuevoStatus);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("error: " + ex.Message + " " + ex.StackTrace + " " + ex.InnerException);
+            }
         }
 
         // DELETE: api/ApiWithActions/5
